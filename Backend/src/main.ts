@@ -3,10 +3,18 @@ import swaggerUi from "swagger-ui-express";
 import sequelize from "./config/database";
 import swaggerDoc from "./config/swagger";
 import userRouter from "./routes/userRoute";
-import preferencesRouter from "./routes/preferencesRoute";
+import preferenceRouter from "./routes/preferenceRoute";
+import helpTicketRouter from "./routes/helpTicketRoute";
+import cartItemRouter from "./routes/cartItemRoute";
+import helpTicketResponseRouter from "./routes/helpTicketResponseRoute";
+import orderRouter from "./routes/orderRoute";
+import productRouter from "./routes/productRoute";
+import reviewRouter from "./routes/reviewRoute";
+import stockRouter from "./routes/stockRoute";
+import orderItemRouter from "./routes/orderItemRoute";
 import initializeModels from './models/associations';
 import User from './models/user';
-import Preferences from './models/preferences';
+import Preferences from './models/preference';
 import HelpTicket from './models/helpTicket';
 import HelpTicketResponse from './models/helpTicketResponse';
 import Review from './models/review';
@@ -15,6 +23,9 @@ import CartItem from './models/cartItem';
 import Order from './models/order';
 import OrderItem from './models/orderItem';
 import Stock from './models/stock';
+
+
+
 
 
 initializeModels();
@@ -34,7 +45,19 @@ app.get("/swagger.json", (req, res) => {
 
 // Routes
 app.use("/api/users", userRouter);
-app.use("/api/preferences", preferencesRouter);
+app.use("/api/users", preferenceRouter);
+app.use("/api/users", cartItemRouter);
+
+app.use("/api", reviewRouter);
+app.use("/api", helpTicketRouter);
+app.use("/api", orderRouter);
+
+app.use("/api/help-tickets", helpTicketResponseRouter);
+
+app.use("/api/products", productRouter);
+app.use("/api/products", stockRouter);
+
+app.use("/api/orders", orderItemRouter);
 
 
 

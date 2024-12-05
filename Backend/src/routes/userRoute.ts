@@ -7,6 +7,8 @@ const userRouter = Router();
  * @openapi
  * /api/users:
  *   get:
+ *     tags:
+ *       - Users
  *     summary: Get all users
  *     description: Retrieve a list of all users.
  *     responses:
@@ -48,6 +50,8 @@ userRouter.get("/", async (req: Request, res: Response) => {
  * @openapi
  * /api/users/{id}:
  *   get:
+ *     tags:
+ *       - Users
  *     summary: Get user by ID
  *     description: Retrieve a specific user by their ID.
  *     parameters:
@@ -110,6 +114,8 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
  * @openapi
  * /api/users:
  *   post:
+ *     tags:
+ *       - Users
  *     summary: Create a new user
  *     description: Add a new user to the system.
  *     requestBody:
@@ -167,6 +173,8 @@ userRouter.post("/", async (req: Request, res: Response) => {
  * @openapi
  * /api/users/{id}:
  *   put:
+ *     tags:
+ *       - Users
  *     summary: Update user
  *     description: Update the details of an existing user.
  *     parameters:
@@ -232,6 +240,8 @@ userRouter.put("/:id", async (req: Request, res: Response) => {
  * @openapi
  * /api/users/{id}:
  *   delete:
+ *     tags:
+ *       - Users
  *     summary: Delete user
  *     description: Remove a user from the system.
  *     parameters:
@@ -266,11 +276,5 @@ userRouter.delete("/:id", async (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal server error." });
     }
 });
-
-
-
-
-
-
 
 export default userRouter;

@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 
 // Preferences Model
-class Preferences extends Model {
+class Preference extends Model {
     public id!: number;
     public userId!: number;
     public receiveNotification!: boolean;
@@ -10,7 +10,7 @@ class Preferences extends Model {
     public newsLetter!: boolean;
 }
 
-Preferences.init(
+Preference.init(
     {
         id: {type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true,},
         userId: {type: DataTypes.INTEGER, allowNull: false,},
@@ -24,4 +24,4 @@ Preferences.init(
     }
 );
 
-export default Preferences;
+export default Preference;

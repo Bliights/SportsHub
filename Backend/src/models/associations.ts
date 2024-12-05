@@ -1,5 +1,5 @@
 import User from './user';
-import Preferences from './preferences';
+import Preference from './preference';
 import HelpTicket from './helpTicket';
 import HelpTicketResponse from "./helpTicketResponse";
 import Review from './review';
@@ -11,8 +11,8 @@ import Stock from "./stock";
 
 const initializeModels = () => {
     // User - Preferences Association
-    User.hasOne(Preferences, { foreignKey: 'userId', onDelete: 'CASCADE' });
-    Preferences.belongsTo(User, { foreignKey: 'userId' });
+    User.hasOne(Preference, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    Preference.belongsTo(User, { foreignKey: 'userId' });
 
     // User - HelpTicket Association
     User.hasMany(HelpTicket, { foreignKey: 'userId' });
