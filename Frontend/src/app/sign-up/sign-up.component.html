@@ -1,0 +1,34 @@
+<h1 class="text-center text-primary">
+  SportsHub
+</h1>
+<h2 class="text-center text-primary">
+  Create New Account
+</h2>
+<h2 class="text-center text-primary">
+  Already Registered ? <a routerLink="">Login</a>
+</h2>
+<form [formGroup]="signupForm">
+  <table class="table">
+    <tr>
+      <td>
+        <label for="Email">Email</label>
+      <input type="email" class="form-control" id="email" >
+      </td>
+    </tr>
+    <tr>
+      <td><label for="username">Pseudo</label>
+      <input type="text" class="form-control" id="username"></td>
+    </tr>
+    <tr>
+      <td><label for="password">Password</label>
+      <input type="password" class="form-control" id="password"></td>
+    </tr>
+    <tr>
+      <td><label for="dob">Date of Birth</label>
+      <input type="date" class="form-control" id="dob"></td>
+    </tr>
+    <tr>
+      <button (click)="onSubmitSignup()" class="btn btn-primary" [disabled]="!signupForm.valid">Sign Up</button>
+    </tr>
+  </table>
+</form>
