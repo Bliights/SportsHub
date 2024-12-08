@@ -6,69 +6,8 @@
     <button class="btn btn-outline-primary mb-2">Special Offers</button>
   </div>
   <div class="d-flex flex-wrap">
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
-    <app-product-item></app-product-item>
+    <div *ngFor="let product of products">
+      <app-product-item [name]="product.name" [price]="product.price.toString()" [image]="product.imageUrl"></app-product-item>
+    </div>
   </div>
 </div>

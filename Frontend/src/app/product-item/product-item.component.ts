@@ -12,7 +12,9 @@ import {NgOptimizedImage} from '@angular/common';
 })
 export class ProductItemComponent {
   @Input() image: string = "";
-  @Input() title?: string = "Test";
-  @Input() price?: string = "1.00€";
-
+  @Input() name?: string = "";
+  @Input() price?: string = "0€";
+  constructor() {
+    console.log(this.image);
+  }
 }
