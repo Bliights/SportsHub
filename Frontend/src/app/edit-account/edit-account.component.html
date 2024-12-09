@@ -1,0 +1,47 @@
+<app-nav-bar></app-nav-bar>
+
+<h2 class="text-center text-primary">
+  Update account
+</h2>
+
+<div class="form-container mx-5">
+  <form [formGroup]="changePassword">
+    <td>
+      <label for="old-password">Old Password</label>
+      <input type="password" class="form-control" id="old-password" formControlName="oldPassword">
+    </td>
+    <td>
+    </td>
+    <td>
+      <label for="newPassword">New password</label>
+      <input type="password" class="form-control" id="newPassword" formControlName="newPassword">
+    </td>
+    <tr>
+      <button (click)="onSubmitPassword()" class="btn btn-primary mt-3" [disabled]="!changePassword.valid">Update Password</button>
+    </tr>
+  </form>
+</div>
+
+<div class="form-container mx-5">
+  <form [formGroup]="changeEmail">
+    <td>
+      <label for="email">New email</label>
+      <input type="text" class="form-control" id="email" formControlName="email">
+    </td>
+    <tr>
+      <button (click)="onSubmitEmail()" class="btn btn-primary mt-3" [disabled]="!changeEmail.valid">Update Email</button>
+    </tr>
+  </form>
+</div>
+
+<div class="form-container mx-5">
+  <form [formGroup]="changeName">
+    <td>
+      <label for="username">New Name</label>
+      <input type="text" class="form-control" id="username" formControlName="username">
+    </td>
+    <tr>
+      <button (click)="onSubmitName()" class="btn btn-primary mt-3" [disabled]="!changeName.valid">Update Name</button>
+    </tr>
+  </form>
+</div>

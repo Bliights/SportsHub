@@ -15,6 +15,5 @@ export class ProductItemComponent {
   @Input() name?: string = "";
   @Input() price?: string = "0€";
   constructor() {
-    console.log(this.image);
   }
 }

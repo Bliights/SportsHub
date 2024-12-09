@@ -6,8 +6,9 @@
     </a>
     <!-- Profile and Cart buttons -->
     <div class="ms-auto d-flex">
-      <a class="btn btn-outline-primary me-2" href="/profile">Profile</a>
-      <a class="btn btn-outline-secondary" href="/cart">Cart</a>
+      <button class="btn btn-outline-secondary me-2">Help</button>
+      <button class="btn btn-outline-info me-2" (click)="onClickCart()">Cart</button>
+      <button class="btn btn-outline-primary" (click)="onClickProfile()">Profile</button>
     </div>
   </div>
 </nav>

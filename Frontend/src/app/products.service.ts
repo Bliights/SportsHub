@@ -34,7 +34,7 @@ export class ProductModel {
   public category!: string;
   public brand!: string;
   public imageUrl!: string;
-  constructor(src: ProductModel) {
+  constructor(src: ProductDTO) {
     this.id = src.id||-1;
     this.name = src.name||'';
     this.description = src.description||'';

@@ -145,7 +145,6 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
  */
 userRouter.post("/", async (req: Request, res: Response) => {
     const { name, email, password, role } = req.body;
-
     try {
         if (!name || !email || !password || !role) {
             res.status(400).json({
