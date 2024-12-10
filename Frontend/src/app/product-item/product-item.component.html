@@ -1,8 +1,8 @@
 <div class="product-item m-3">
-  <img [src]="image" alt="Product Image" class="product-image fill">
-  <h3 class="product-title">{{name}}</h3>
+  <img [src]="product.imageUrl" alt="Product Image" class="product-image fill">
+  <h3 class="product-title">{{product.name}}</h3>
   <div class="d-flex justify-content-between align-items-center">
-    <p class="product-price mb-0">{{ price }}€</p>
-    <button class="btn btn-primary">Add</button>
+    <p class="product-price mb-0">{{ product.price }}€</p>
+    <button class="btn btn-primary" (click)="addToCart()">Add</button>
   </div>
 </div>

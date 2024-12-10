@@ -2,7 +2,6 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {map, catchError} from 'rxjs/operators';
-import {SignUpPackage} from './sign-up/sign-up.component';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +12,7 @@ export class AuthService {
   public idUser: number = -1;
 
   constructor() {
+    this.isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
   }
 
   authSuccessful(email: string, password: string): Observable<boolean> {
@@ -103,6 +103,16 @@ export class AuthService {
         return of(null); // Return null in case of error
       })
     );
+  }
+  login() {
+    this.isAuthenticated = true;
+    localStorage.setItem('isLoggedIn', 'true');
+  }
+
+  logout() {
+    this.isAuthenticated = false;
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('cart');
   }
 }
 export interface userDTO {

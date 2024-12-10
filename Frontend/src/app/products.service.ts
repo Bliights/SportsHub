@@ -24,6 +24,7 @@ export interface ProductDTO {
   category: string;
   brand: string;
   imageUrl: string;
+  quantity?: number;
 }
 
 export class ProductModel {
@@ -34,6 +35,7 @@ export class ProductModel {
   public category!: string;
   public brand!: string;
   public imageUrl!: string;
+  public quantity!: number;
   constructor(src: ProductDTO) {
     this.id = src.id||-1;
     this.name = src.name||'';
@@ -42,5 +44,6 @@ export class ProductModel {
     this.category = src.category||'';
     this.brand = src.brand||'';
     this.imageUrl = src.imageUrl||'';
+    this.quantity = 1;
   }
 }

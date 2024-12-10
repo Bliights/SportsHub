@@ -1,5 +1,9 @@
 import {Component, Input} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
+import { CartService } from '../cart.service';
+import {ProductDTO, ProductModel} from '../products.service';
 
 @Component({
   selector: 'app-product-item',
@@ -11,9 +15,14 @@ import {NgOptimizedImage} from '@angular/common';
   styleUrl: './product-item.component.css'
 })
 export class ProductItemComponent {
-  @Input() image: string = "";
-  @Input() name?: string = "";
-  @Input() price?: string = "0€";
-  constructor() {
+  @Input() product: ProductDTO=new ProductModel({id: -1, name: '', description: '', price: 0, category: '', brand: '', imageUrl: ''});
+  constructor(private authService: AuthService, private router: Router, private cartService: CartService) {
+  }
+  addToCart(){
+    if(!this.authService.isAuthenticated){
+      this.router.navigate(['/login']);
+    }else{
+      this.cartService.addToCart(this.product);
+    }
   }
 }

@@ -30,6 +30,7 @@ export class LoginComponent {
         this.authService.authSuccessful(this.loginForm.value.email, this.loginForm.value.password).subscribe(isThisPasswordValid => {
           if (isThisPasswordValid && this.loginForm.valid) {
             this.authService.isAuthenticated = true;
+            this.authService.login();
             this.authService.getUserId(this.loginForm.value.email).subscribe(id => {
               this.authService.idUser = id;
               this.router.navigate(['/']);
@@ -42,5 +43,9 @@ export class LoginComponent {
         console.log('Invalid credentials');
       }
     });
+  }
+  onLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

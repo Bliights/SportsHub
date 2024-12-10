@@ -1,0 +1,33 @@
+<app-nav-bar></app-nav-bar>
+<div class="container mt-4">
+  <h2>Shopping Cart</h2>
+  <div *ngIf="cartItems.length === 0" class="alert alert-info">
+    Your cart is empty.
+  </div>
+  <div *ngIf="cartItems.length > 0">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of cartItems">
+        <td>{{ item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.price * item.quantity! }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+      <h4>Total: {{total}}</h4>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-dark" [disabled]="cartItems.length === 0" (click)="orderItems()" >Order</button>
+    </div>
+  </div>
+</div>

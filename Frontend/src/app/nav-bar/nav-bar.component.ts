@@ -25,10 +25,9 @@ export class NavBarComponent {
 
   onClickCart() {
     if(this.authService.isAuthenticated){
-      console.log('all good');
+      this.router.navigate(['/cart']);
     }else{
-      //redirect to login page
-      this.router.navigate(['/login'])
+      this.router.navigate(['/login']);
 
     }
   }

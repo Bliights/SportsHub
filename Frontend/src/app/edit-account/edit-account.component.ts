@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../auth.service';
 
@@ -20,7 +20,7 @@ export class EditAccountComponent {
   changeEmail: FormGroup;
   changeName: FormGroup;
 
-  constructor(formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
     this.changePassword = formBuilder.group({
       oldPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
@@ -64,5 +64,10 @@ export class EditAccountComponent {
         console.log('Error changing name');
       }
     });
+  }
+
+  onClickLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
