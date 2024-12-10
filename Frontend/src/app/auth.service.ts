@@ -18,7 +18,13 @@ export class AuthService {
   authSuccessful(email: string, password: string): Observable<boolean> {
     return this.httpClient.get<userDTO[]>('/api/users').pipe(
       map((userList: userDTO[]) => {
-        return userList.some((user: userDTO) => user.email === email && user.password === password);
+        const user = userList.find((user: userDTO) => user.email === email && user.password === password);
+        if (user) {
+          this.idUser = user.id; // Enregistrer l'ID de l'utilisateur
+          console.log(user,user.id, this.idUser);
+          return true;
+        }
+        return false;
       }),
       catchError((error: any) => {
         console.error('Erreur lors de l\'authentification :', error);
