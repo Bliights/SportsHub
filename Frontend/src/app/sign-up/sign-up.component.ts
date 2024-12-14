@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 import { AuthService } from '../auth.service';
+import {UsersService} from '../../generated';
 
 export interface SignUpPackage {
   email: string;
@@ -26,8 +27,9 @@ export interface SignUpPackage {
 })
 export class SignUpComponent {
   signupForm: FormGroup;
+  private readonly authService = inject(AuthService);
 
-  constructor(private router: Router, formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(private router: Router, formBuilder: FormBuilder) {
     this.signupForm = formBuilder.group({
       email: ['', Validators.required],
       username: ['', Validators.required],

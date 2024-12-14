@@ -1,0 +1,38 @@
+<app-nav-bar></app-nav-bar>
+<div class="text-center mt-4">
+  <button class="btn btn-primary" (click)="helpCenter()">back to list</button>
+</div>
+<div class="message-container">
+  <div #messageBox class="message-box">
+    <div
+      *ngFor="let response of responses"
+      class="message"
+      [ngClass]="{
+        'sent': response.userId === idUser,
+        'received': response.userId !== idUser
+      }"
+    >
+      <p class="message-content">{{ response.response }}</p>
+      <span class="message-time">
+        {{ response.createdAt | date: 'dd/MM/yyyy' }} |
+        {{ response.createdAt | date: 'HH:mm' }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="text-center mt-3">
+  <form [formGroup]="responseForm" (ngSubmit)="sendResponse()">
+    <div class="d-flex justify-content-center align-items-center">
+      <input
+        type="text"
+        formControlName="response"
+        class="form-control w-75"
+        placeholder="Type your message..."
+      />
+      <button type="submit" class="btn btn-success ms-2" [disabled]="responseForm.invalid">
+        Envoyer
+      </button>
+    </div>
+  </form>
+</div>

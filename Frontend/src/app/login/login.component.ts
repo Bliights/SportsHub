@@ -29,10 +29,9 @@ export class LoginComponent {
       if (isThisUserValid) {
         this.authService.authSuccessful(this.loginForm.value.email, this.loginForm.value.password).subscribe(isThisPasswordValid => {
           if (isThisPasswordValid && this.loginForm.valid) {
-            this.authService.isAuthenticated = true;
-            this.authService.login();
             this.authService.getUserId(this.loginForm.value.email).subscribe(id => {
               this.authService.idUser = id;
+              this.authService.login();
               this.router.navigate(['/']);
             });
           } else {

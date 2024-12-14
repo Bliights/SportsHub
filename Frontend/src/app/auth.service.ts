@@ -13,6 +13,8 @@ export class AuthService {
 
   constructor() {
     this.isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
+    const id = localStorage.getItem('id')
+    this.idUser = id ? parseInt(id, 10) : -1;
   }
 
   authSuccessful(email: string, password: string): Observable<boolean> {
@@ -22,15 +24,15 @@ export class AuthService {
           (user: any) => user.email === email && user.password === password
         );
         if (user) {
-          this.idUser = user.id; // Enregistrer l'ID de l'utilisateur
+          this.idUser = user.id;
           console.log(user, user.id, this.idUser);
           return true;
         }
         return false;
       }),
       catchError((error: any) => {
-        console.error('Erreur lors de l\'authentification :', error);
-        return of(false); // Retourne false en cas d'erreur
+        console.error('Error whith authent:', error);
+        return of(false);
       })
     );
   }
@@ -41,8 +43,8 @@ export class AuthService {
         return userList.some((user: any) => user.email === email);
       }),
       catchError((error: any) => {
-        console.error('Erreur lors de la vérification des comptes :', error);
-        return of(false); // Retourne false en cas d'erreur
+        console.error('Error whith account:', error);
+        return of(false);
       })
     );
   }
@@ -54,8 +56,8 @@ export class AuthService {
         return user ? user.id : -1;
       }),
       catchError((error: any) => {
-        console.error('Erreur lors de la récupération de l\'id :', error);
-        return of(-1); // Retourne -1 en cas d'erreur
+        console.error('Error to get the id :', error);
+        return of(-1);
       })
     );
   }
@@ -71,8 +73,8 @@ export class AuthService {
       .pipe(
         map((response: any) => response.id),
         catchError((error: any) => {
-          console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
-          return of(-1); // Retourne -1 en cas d'erreur
+          console.error('Error while adding user :', error);
+          return of(-1);
         })
       );
   }
@@ -81,8 +83,8 @@ export class AuthService {
     const body = { email: email };
     return this.usersService.apiUsersIdPut(body, this.idUser).pipe(
       catchError((error: any) => {
-        console.error('Erreur lors du changement d\'email :', error);
-        return of(null); // Retourne null en cas d'erreur
+        console.error('Error while changing email :', error);
+        return of(null);
       })
     );
   }
@@ -94,18 +96,18 @@ export class AuthService {
           const body = { password: newPassword };
           return this.usersService.apiUsersIdPut(body, id).pipe(
             catchError((error: any) => {
-              console.error('Erreur lors du changement de mot de passe :', error);
-              return of(null); // Retourne null en cas d'erreur
+              console.error('Error while changing the password :', error);
+              return of(null);
             })
           );
         } else {
-          console.error('L\'ancien mot de passe ne correspond pas');
-          return of(null); // Retourne null si l'ancien mot de passe ne correspond pas
+          console.error('Old password does not match');
+          return of(null);
         }
       }),
       catchError((error: any) => {
-        console.error('Erreur lors de la récupération des données utilisateur :', error);
-        return of(null); // Retourne null en cas d'erreur
+        console.error('Error :', error);
+        return of(null);
       })
     );
   }
@@ -114,8 +116,8 @@ export class AuthService {
     const body = { name: name };
     return this.usersService.apiUsersIdPut(body, id).pipe(
       catchError((error: any) => {
-        console.error('Erreur lors du changement de nom :', error);
-        return of(null); // Retourne null en cas d'erreur
+        console.error('Error for the change of name :', error);
+        return of(null);
       })
     );
   }
@@ -123,11 +125,13 @@ export class AuthService {
   login() {
     this.isAuthenticated = true;
     localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('id', this.idUser.toString());
   }
 
   logout() {
     this.isAuthenticated = false;
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('id');
     localStorage.removeItem('cart');
   }
 }

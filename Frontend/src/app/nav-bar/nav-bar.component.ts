@@ -31,4 +31,13 @@ export class NavBarComponent {
 
     }
   }
+
+  onClickHelp() {
+    if(this.authService.isAuthenticated){
+      this.router.navigate(['/help']);
+    }else{
+      this.router.navigate(['/login']);
+
+    }
+  }
 }

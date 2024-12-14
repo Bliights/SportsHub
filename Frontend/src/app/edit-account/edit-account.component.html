@@ -25,9 +25,18 @@
 <div class="form-container mx-5">
   <form [formGroup]="changeEmail">
     <td>
+      <label>Actual Email</label>
+      <div *ngIf="user">
+        <p id="actualEmail">{{ user.email }}</p>
+      </div>
+    </td>
+    <td>
       <label for="email">New email</label>
       <input type="text" class="form-control" id="email" formControlName="email">
     </td>
+    <small *ngIf="changeEmail.get('email')?.invalid && (changeEmail.get('email')?.dirty || changeEmail.get('email')?.touched)" class="text-danger">
+      Need to be a valid email address.
+    </small>
     <tr>
       <button (click)="onSubmitEmail()" class="btn btn-primary mt-3" [disabled]="!changeEmail.valid">Update Email</button>
     </tr>
@@ -37,9 +46,18 @@
 <div class="form-container mx-5">
   <form [formGroup]="changeName">
     <td>
+      <label>Actual Name</label>
+      <div *ngIf="user">
+        <p id="actualName">{{ user.name }}</p>
+      </div>
+    </td>
+    <td>
       <label for="username">New Name</label>
       <input type="text" class="form-control" id="username" formControlName="username">
     </td>
+    <small *ngIf="changeName.get('username')?.invalid && changeName.get('username')?.touched" class="text-danger">
+      Need to be at least 1 character.
+    </small>
     <tr>
       <button (click)="onSubmitName()" class="btn btn-primary mt-3" [disabled]="!changeName.valid">Update Name</button>
     </tr>
