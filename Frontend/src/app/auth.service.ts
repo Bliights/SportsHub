@@ -132,9 +132,6 @@ export class AuthService {
   }
 }
 
-
-
-
 export interface userDTO {
   id: number;
   name: string;
