@@ -1,0 +1,12 @@
+{
+  "name": "sportshub",
+  "version": "1.0.0",
+  "description": "Created by :\r - Clément MOLLY-MITTON \r - Diane VERBECQ\r - Raphaël VIGNAL\r - Paul ESCALIER",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
