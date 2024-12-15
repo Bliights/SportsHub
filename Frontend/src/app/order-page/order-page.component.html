@@ -1,0 +1,62 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="history-container">
+  <h1>Order History</h1>
+
+  <section class="history-section">
+    <h2>Recent Orders</h2>
+    <table class="order-table">
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Total</th>
+        <th>Payment Method</th>
+        <th>Shipping Address</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody id="order-history">
+      <!-- Orders will be dynamically loaded here -->
+      </tbody>
+    </table>
+  </section>
+
+  <section class="order-details hidden" id="order-details-section">
+    <h2>Order Details</h2>
+    <div class="order-info" id="order-info">
+      <!-- Detailed order info will be dynamically loaded here -->
+    </div>
+    <button id="back-to-orders" class="back-button">Back to Order History</button>
+  </section>
+
+  <section class="filter-section">
+    <h2>Filter Orders</h2>
+    <div class="form-group">
+      <label for="filter-status">Status:</label>
+      <select id="filter-status">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="canceled">Canceled</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="filter-date">Order Date:</label>
+      <input type="date" id="filter-date">
+    </div>
+    <button id="apply-filter" class="filter-button">Apply Filter</button>
+  </section>
+</div>
+
+</body>
+</html>
