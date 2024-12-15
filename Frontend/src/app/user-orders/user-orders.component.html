@@ -1,0 +1,27 @@
+<app-nav-bar></app-nav-bar>
+<div class="container mt-4">
+  <h1>Order History</h1>
+
+  <!-- Recent Orders Section -->
+  <section class="history-section">
+    <h2>Recent Orders</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Status</th>
+        <th>Total Price</th>
+        <th>Created At</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.id }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.totalPrice }} €</td>
+        <td>{{ order.createdAt | date: 'dd-MM-yyyy' }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
