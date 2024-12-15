@@ -1,77 +1,66 @@
-interface UserPreferences {
-  username: string;
-  email: string;
-  emailNotifications: boolean;
-  smsNotifications: boolean;
-  pushNotifications: boolean;
-  theme: string;
-  fontSize: string;
-  language: string;
-  dataSharing: boolean;
-  adTracking: boolean;
-  twoFactorAuth: boolean;
-  password: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {PreferencesService, UserIdPreferencesBody} from '../../generated';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
-const saveButton = document.getElementById('save-button') as HTMLButtonElement;
-const usernameInput = document.getElementById('username') as HTMLInputElement;
-const emailInput = document.getElementById('email') as HTMLInputElement;
-const emailNotificationsInput = document.getElementById('email-notifications') as HTMLInputElement;
-const smsNotificationsInput = document.getElementById('sms-notifications') as HTMLInputElement;
-const pushNotificationsInput = document.getElementById('push-notifications') as HTMLInputElement;
-const themeSelect = document.getElementById('theme') as HTMLSelectElement;
-const fontSizeSelect = document.getElementById('font-size') as HTMLSelectElement;
-const languageSelect = document.getElementById('language') as HTMLSelectElement;
-const dataSharingInput = document.getElementById('data-sharing') as HTMLInputElement;
-const adTrackingInput = document.getElementById('ad-tracking') as HTMLInputElement;
-const twoFactorInput = document.getElementById('two-factor') as HTMLInputElement;
-const passwordInput = document.getElementById('password') as HTMLInputElement;
+@Component({
+  selector: 'app-preference-page',
+  standalone: true,
+  imports: [
+    NavBarComponent,
+    ReactiveFormsModule
+  ],
+  templateUrl: './preference-page.component.html',
+  styleUrls: ['./preference-page.component.css']
+})
+export class PreferencePageComponent implements OnInit {
+  preferenceForm: FormGroup;
+  userId = localStorage.getItem('id');
 
-function getUserPreferences(): UserPreferences {
-  return {
-    username: usernameInput.value,
-    email: emailInput.value,
-    emailNotifications: emailNotificationsInput.checked,
-    smsNotifications: smsNotificationsInput.checked,
-    pushNotifications: pushNotificationsInput.checked,
-    theme: themeSelect.value,
-    fontSize: fontSizeSelect.value,
-    language: languageSelect.value,
-    dataSharing: dataSharingInput.checked,
-    adTracking: adTrackingInput.checked,
-    twoFactorAuth: twoFactorInput.checked,
-    password: passwordInput.value
-  };
-}
+  constructor(
+    private preferencesService: PreferencesService,
+    private fb: FormBuilder
+  ) {
+    this.preferenceForm = this.fb.group({
+      receiveNotification: [false],
+      theme: ['light'],
+      newsLetter: [false]
+    });
+  }
 
-function savePreferences(preferences: UserPreferences): void {
-  localStorage.setItem('userPreferences', JSON.stringify(preferences));
-  alert('Preferences saved successfully!');
-}
+  ngOnInit(): void {
+    if (this.userId) {
+      this.loadPreferences();
+    } else {
+      console.error('No user ID provided!');
+    }
+  }
 
-function loadPreferences(): void {
-  const savedPreferences = localStorage.getItem('userPreferences');
-  if (savedPreferences) {
-    const preferences: UserPreferences = JSON.parse(savedPreferences);
-    usernameInput.value = preferences.username;
-    emailInput.value = preferences.email;
-    emailNotificationsInput.checked = preferences.emailNotifications;
-    smsNotificationsInput.checked = preferences.smsNotifications;
-    pushNotificationsInput.checked = preferences.pushNotifications;
-    themeSelect.value = preferences.theme;
-    fontSizeSelect.value = preferences.fontSize;
-    languageSelect.value = preferences.language;
-    dataSharingInput.checked = preferences.dataSharing;
-    adTrackingInput.checked = preferences.adTracking;
-    twoFactorInput.checked = preferences.twoFactorAuth;
-    passwordInput.value = preferences.password;
+  loadPreferences(): void {
+    this.preferencesService.apiUsersUserIdPreferencesGet(this.userId).subscribe({
+      next: (preference) => {
+        this.preferenceForm.patchValue(preference);
+      },
+      error: (err) => {
+        console.error('Failed to load preferences', err);
+      }
+    });
+  }
+
+  savePreferences(): void {
+    let updatedPreference: UserIdPreferencesBody = {
+      receiveNotification: this.preferenceForm.value.receiveNotification,
+      theme: this.preferenceForm.value.theme,
+      newsLetter: this.preferenceForm.value.newsLetter
+    };
+
+    this.preferencesService.apiUsersUserIdPreferencesPut(updatedPreference,this.userId).subscribe({
+      next: (preference) => {
+        console.log('Preferences updated successfully', preference);
+      },
+      error: (err) => {
+        console.error('Failed to update preferences', err);
+      }
+    });
   }
 }
-
-saveButton.addEventListener('click', () => {
-  const preferences = getUserPreferences();
-  savePreferences(preferences);
-});
-
-// Load preferences on page load
-window.addEventListener('DOMContentLoaded', loadPreferences);
