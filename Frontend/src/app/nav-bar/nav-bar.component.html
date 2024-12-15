@@ -2,13 +2,27 @@
   <div class="container-fluid">
     <!-- Brand / Home -->
     <a class="navbar-brand" href="#">
-      <i class="bi bi-house-fill"></i>SportsHub
+      <i class="bi bi-house-fill"></i> SportsHub
     </a>
     <!-- Profile and Cart buttons -->
     <div class="ms-auto d-flex">
       <button class="btn btn-outline-secondary me-2" (click)="onClickHelp()">Help</button>
       <button class="btn btn-outline-info me-2" (click)="onClickCart()">Cart</button>
-      <button class="btn btn-outline-primary" (click)="onClickProfile()">Profile</button>
+      <div class="dropdown mr-3">
+        <button
+          class="btn btn-outline-primary dropdown-toggle"
+          type="button"
+          id="profileDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+          Profile
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+          <li><button class="dropdown-item" (click)="onClickPreferences()">Preferences</button></li>
+          <li><button class="dropdown-item" (click)="onClickOrders()">Orders</button></li>
+          <li><button class="dropdown-item" (click)="onClickEditProfile()">Edit Profile</button></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>

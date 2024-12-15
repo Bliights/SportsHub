@@ -96,7 +96,7 @@ app.listen(3000, () => {
             name: 'Football',
             description: 'Official size and weight football for matches.',
             price: 25.99,
-            category: 'Team Sports',
+            category: 'Equipment',
             brand: 'Nike',
             imageUrl: 'https://m.media-amazon.com/images/I/61qUB5uSx5L._AC_SL1500_.jpg',
         });
@@ -105,7 +105,7 @@ app.listen(3000, () => {
             name: 'Basketball',
             description: 'Durable outdoor basketball.',
             price: 30.99,
-            category: 'Team Sports',
+            category: 'Equipment',
             brand: 'Spalding',
             imageUrl: 'https://media.carrefour.fr/medias/3202dd92cc93313daa8b79248c7cd84c/p_1500x1500/1463f12dce37475c9934cf0f6c30afe2-image.jpg',
         });

@@ -10,9 +10,9 @@ import {Router} from '@angular/router';
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent {
- constructor(private authService: AuthService, private router: Router) {
- }
-  onClickProfile() {
+  constructor(private authService: AuthService, private router: Router) {
+  }
+  onClickEditProfile() {
     //if connected redirect to Profile page, else, redirect to login page
     if(this.authService.isAuthenticated){
       this.router.navigate(['/edit-account'])
@@ -38,6 +38,22 @@ export class NavBarComponent {
     }else{
       this.router.navigate(['/login']);
 
+    }
+  }
+
+  onClickPreferences() {
+    if (this.authService.isAuthenticated) {
+      this.router.navigate(['/preferences']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  onClickOrders() {
+    if (this.authService.isAuthenticated) {
+      this.router.navigate(['/user-orders']);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 }

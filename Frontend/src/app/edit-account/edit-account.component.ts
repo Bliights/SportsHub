@@ -2,7 +2,7 @@ import { Component , OnInit} from '@angular/core';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
 import {Router, RouterLink} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../auth.service';
+import {AuthService, userDTO} from '../auth.service';
 import { UsersService } from '../../generated';
 import {NgIf} from '@angular/common';
 
@@ -24,7 +24,7 @@ export class EditAccountComponent implements OnInit{
   changeName: FormGroup;
   user: any;
 
-  constructor(formBuilder: FormBuilder, private usersService: UsersService, private authService: AuthService, private router: Router) {
+  constructor(formBuilder: FormBuilder, private authService: AuthService, private router: Router, private usersService: UsersService) {
     this.changePassword = formBuilder.group({
       oldPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
@@ -58,23 +58,37 @@ export class EditAccountComponent implements OnInit{
     });
   }
 
-
   onSubmitPassword() {
-    const { oldPassword, newPassword } = this.changePassword.value;
-    this.authService.changePassword(this.authService.idUser, oldPassword, newPassword).subscribe(response => {
-      if (response) {
-        console.log('Password changed');
-      } else {
-        console.log('Error changing password');
-      }
-    });
+    if (this.user && this.user.password === this.changePassword.value.oldPassword) {
+      const updatedUser = { password: this.changePassword.value.newPassword };
+      this.usersService.apiUsersIdPut(updatedUser, this.user.id).subscribe({
+        next: (response) => {
+          if (response) {
+            alert('Password changed');
+            this.changePassword.reset();
+          } else {
+            alert('Error changing password');
+          }
+        },
+        error: (err) => {
+          console.error('Failed to update password:', err);
+          alert('An error occurred while changing the password.');
+        }
+      });
+    } else {
+      alert('Old password does not match');
+    }
   }
+
+
+
 
   onSubmitEmail() {
     //change the email of the user
     this.authService.changeEmail(this.changeEmail.value.email).subscribe(id=>{
       if(id != -1){
-        console.log('Email changed');
+        alert('Email changed');
+        this.changeEmail.reset();
         this.loadUserInfo();
       }else{
         console.log('Error changing email');
@@ -86,8 +100,9 @@ export class EditAccountComponent implements OnInit{
     const { username } = this.changeName.value;
     this.authService.changeName(this.authService.idUser, username).subscribe(response => {
       if (response) {
-        console.log('Name changed');
+        alert('Name changed');
         this.loadUserInfo();
+        this.changeName.reset();
       } else {
         console.log('Error changing name');
       }

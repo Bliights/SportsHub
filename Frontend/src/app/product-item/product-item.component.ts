@@ -18,11 +18,7 @@ export class ProductItemComponent {
   @Input() product: ProductDTO=new ProductModel({id: -1, name: '', description: '', price: 0, category: '', brand: '', imageUrl: ''});
   constructor(private authService: AuthService, private router: Router, private cartService: CartService) {
   }
-  addToCart(){
-    if(!this.authService.isAuthenticated){
-      this.router.navigate(['/login']);
-    }else{
-      this.cartService.addToCart(this.product);
-    }
+  viewProductDetails() {
+    this.router.navigate(['/product', this.product.id]);
   }
 }
