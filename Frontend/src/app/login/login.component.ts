@@ -32,7 +32,13 @@ export class LoginComponent {
             this.authService.getUserId(this.loginForm.value.email).subscribe(id => {
               this.authService.idUser = id;
               this.authService.login();
-              this.router.navigate(['/']);
+              this.authService.isAdmin(id).subscribe(isAdmin => {
+                if (isAdmin) {
+                  this.router.navigate(['/admin-orders']);
+                } else {
+                  this.router.navigate(['/']);
+                }
+              });
             });
           } else {
             console.log('Invalid credentials');

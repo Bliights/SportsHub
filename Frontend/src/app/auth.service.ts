@@ -37,6 +37,16 @@ export class AuthService {
     );
   }
 
+  isAdmin(id: number): Observable<boolean> {
+    return this.usersService.apiUsersIdGet(id).pipe(
+      map((user: any) => user.role === 'admin'),
+      catchError((error: any) => {
+        console.error('Error checking admin role:', error);
+        return of(false);
+      })
+    );
+  }
+
   accountExist(email: string): Observable<boolean> {
     return this.usersService.apiUsersGet().pipe(
       map((userList: any[]) => {

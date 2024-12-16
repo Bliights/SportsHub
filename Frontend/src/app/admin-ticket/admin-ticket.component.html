@@ -1,0 +1,38 @@
+<app-admin-nav-bar></app-admin-nav-bar>
+<div class="container mt-4">
+  <h2>Admin Tickets</h2>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>User ID</th>
+      <th>Status</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let ticket of tickets">
+      <td>{{ ticket.id }}</td>
+      <td>{{ ticket.userId }}</td>
+      <td>{{ ticket.status }}</td>
+      <td>{{ ticket.description }}</td>
+      <td>
+        <button class="btn btn-primary" (click)="editTicket(ticket)">Edit</button>
+        <button class="btn btn-info" (click)="viewTicket(ticket.id)">View</button>      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="editedTicket" class="edit-form">
+    <h3>Edit Ticket</h3>
+    <form (ngSubmit)="saveTicket()">
+      <div class="form-group">
+        <label for="status">Status</label>
+        <input id="status" class="form-control" [(ngModel)]="editedTicket.status" name="status" required>
+      </div>
+      <button type="submit" class="btn btn-success">Save</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+    </form>
+  </div>
+</div>

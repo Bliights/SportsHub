@@ -28,7 +28,14 @@
     <div class="d-flex justify-content-end">
       <h4>Total: {{total}}€</h4>
     </div>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end mb-3">
+      <select class="form-select me-2 custom-width">
+        <option value="card">Card</option>
+        <option value="giftCard">Gift Card</option>
+        <option value="paypal">PayPal</option>
+      </select>
+
+      <div class="d-flex justify-content-end">
       <button class="btn btn-dark" [disabled]="cartItems.length === 0" (click)="orderItems()" >Order</button>
     </div>
   </div>

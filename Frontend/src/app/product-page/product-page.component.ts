@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { ProductsService } from '../../generated';
 import {NgForOf, NgIf} from '@angular/common';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
@@ -31,7 +31,8 @@ export class ProductPageComponent implements OnInit {
               private authService: AuthService,
               private productService: ProductsService,
               private cartService: CartService,
-              private stocksService: StocksService,) {}
+              private stocksService: StocksService,
+              private router: Router) {}
 
   ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('id');
@@ -89,10 +90,15 @@ export class ProductPageComponent implements OnInit {
   }
 
   addToCart(): void {
-    if (this.product && this.selectedSize) {
+    if(!this.authService.isAuthenticated) {
+      this.router.navigate(['/login']);
+    }
+    else if (this.product && this.selectedSize) {
       this.cartService.addToCart(this.authService.idUser, this.product.id, this.quantity,  this.selectedSize );
     }
   }
 
-
+  isQuantityValid(): boolean {
+    return this.quantity > 0 && this.quantity <= this.getStockForSelectedSize();
+  }
 }
