@@ -1,8 +1,8 @@
 .background-image {
-  background-image: url(https://images.pexels.com/photos/956999/milky-way-starry-sky-night-sky-star-956999.jpeg); /* Chemin correct
-  background-size: cover; /* Redimensionne l'image pour couvrir tout l'espace */
+  background-image: url(https://images.pexels.com/photos/163444/sport-treadmill-tor-route-163444.jpeg);
+  background-size: cover;
   background-position: center; /* Centre l'image */
   background-repeat: no-repeat; /* Empêche la répétition */
-  height: 100vh; /* Hauteur de la section */
-  width: 100%; /* Largeur de la section */
+  height: 100vh; /* Hauteur de l'écran */
+  width: 100%; /* Largeur de l'écran */
 }
