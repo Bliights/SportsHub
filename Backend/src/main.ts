@@ -110,11 +110,21 @@ app.listen(3000, () => {
             imageUrl: 'https://media.carrefour.fr/medias/3202dd92cc93313daa8b79248c7cd84c/p_1500x1500/1463f12dce37475c9934cf0f6c30afe2-image.jpg',
         });
 
+        const product3 = await Product.create({
+            name: 'adidas-duramo-black',
+            description: 'Really nice shoes.',
+            price: 149.99,
+            category: 'Clothe',
+            brand: 'adidas',
+            imageUrl: 'https://picou-montagne.com/wp-content/uploads/2022/03/adidas-duramo-noir-chaussure-running-homme-1.jpg',
+        });
+        
+
         // Insert Stock
         await Stock.create({
             productId: product1.id,
             size: 'Standard',
-            quantity: 100,
+            quantity: 0,
         });
 
         await Stock.create({
@@ -122,6 +132,21 @@ app.listen(3000, () => {
             size: 'Standard',
             quantity: 50,
         });
+
+        await Stock.create({
+            productId: product3.id,
+            size: '42',
+            quantity: 50,
+        });
+
+        await Stock.create({
+            productId: product3.id,
+            size: '40',
+            quantity: 100,
+        });
+
+
+
 
         // Insert Reviews
         await Review.create({

@@ -27,7 +27,7 @@ export class CartService {
 
 
 
-  addToCart(product: ProductDTO, quantity: number = 1) {
+  addToCart(product: ProductDTO, quantity: number = 1, size: string = '') {
     this.httpClient.get<StockDTO[]>(`/api/products/${product.id}/stock`).subscribe({
       next: (response: StockDTO[]) => {
         const isInStock = response[0].quantity >= quantity;

@@ -7,12 +7,58 @@
     <p class="product-price"><strong>Price:</strong> {{ product.price }}€</p>
     <p class="product-category"><strong>Category:</strong> {{ product.category }}</p>
     <p class="product-brand"><strong>Brand:</strong> {{ product.brand }}</p>
-    <div class="form-group row">
-      <label for="quantity" class="col-sm-2 col-form-label">Quantity:</label>
-      <div class="col-sm-10">
-        <input id="quantity" type="number" class="form-control" [(ngModel)]="quantity" min="1" value="1">
+
+    <div *ngIf="availableSizes.length > 0; else outOfStock">
+      <div class="form-group row mt-3">
+        <label for="size" class="col-sm-2 col-form-label">Select Size:</label>
+        <div class="col-sm-10">
+          <select
+            id="size"
+            class="form-control"
+            [(ngModel)]="selectedSize"
+            (change)="onSizeChange()">
+            <option
+              *ngFor="let size of availableSizes"
+              [value]="size.size">
+              {{ size.size }}
+            </option>
+          </select>
+        </div>
       </div>
+
+      <!-- Taille affichée -->
+      <p class="mt-3">
+        <strong>Stock:</strong> {{ getStockForSelectedSize() }}
+      </p>
+
+      <!-- Quantité -->
+      <div class="form-group row">
+        <label for="quantity" class="col-sm-2 col-form-label">Quantity:</label>
+        <div class="col-sm-10">
+          <input
+            id="quantity"
+            type="number"
+            class="form-control"
+            [(ngModel)]="quantity"
+            [min]="1"
+            [max]="getStockForSelectedSize()"
+            [disabled]="getStockForSelectedSize() <= 0"
+            (input)="validateQuantity($event)">
+        </div>
+      </div>
+
+
+      <button
+        class="btn btn-dark mt-3"
+        (click)="addToCart()"
+        [disabled]="getStockForSelectedSize() <= 0">
+        Add to Cart
+      </button>
     </div>
-    <button class="btn btn-dark mt-3" (click)="addToCart()">Add to Cart</button>
+
+    <!-- Stock épuisé -->
+    <ng-template #outOfStock>
+      <p class="text-danger">Out of stock</p>
+    </ng-template>
   </div>
 </div>
