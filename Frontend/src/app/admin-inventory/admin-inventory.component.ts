@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductsService } from '../../generated';
+import {ProductsService, StocksService} from '../../generated';
 import { AdminNavBarComponent } from '../admin-nav-bar/admin-nav-bar.component';
-import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-admin-inventory',
@@ -16,13 +16,23 @@ import {NgForOf, NgIf} from '@angular/common';
   ],
   styleUrls: ['./admin-inventory.component.css']
 })
-
-
 export class AdminInventoryComponent implements OnInit {
   products: Product[] = [];
   editedProduct: Product | null = null;
+  newProduct: any = {
+    name: '',
+    description: '',
+    price: 0,
+    category: '',
+    brand: '',
+    imageUrl: ''
+  };
+  newStock: any = {
+    quantity: 0,
+    size: ''
+  };
 
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService, private stockService: StocksService) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -40,7 +50,7 @@ export class AdminInventoryComponent implements OnInit {
 
   saveProduct(): void {
     if (this.editedProduct) {
-      this.productsService.apiProductsIdPut(this.editedProduct,this.editedProduct.id).subscribe(() => {
+      this.productsService.apiProductsIdPut(this.editedProduct, this.editedProduct.id).subscribe(() => {
         this.loadProducts();
         this.editedProduct = null;
       });
@@ -49,6 +59,31 @@ export class AdminInventoryComponent implements OnInit {
 
   cancelEdit(): void {
     this.editedProduct = null;
+  }
+
+  addProduct(): void {
+    this.productsService.apiProductsPost(this.newProduct).subscribe((createdProduct) => {
+      const newStockEntry = {
+        quantity: this.newStock.quantity,
+        size: this.newStock.size
+      };
+      // Assuming you have a service method to add stock
+      this.stockService.apiProductsProductIdStockPost(newStockEntry,createdProduct.id).subscribe(() => {
+        this.loadProducts();
+        this.newProduct = {
+          name: '',
+          description: '',
+          price: 0,
+          category: '',
+          brand: '',
+          imageUrl: ''
+        };
+        this.newStock = {
+          quantity: 0,
+          size: ''
+        };
+      });
+    });
   }
 }
 
