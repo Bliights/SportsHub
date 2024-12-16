@@ -1,56 +1,80 @@
 import { inject, Injectable } from '@angular/core';
 import { ProductDTO } from './products.service';
 import { HttpClient } from '@angular/common/http';
-
+import { CartItemsService } from '../generated';
+import { catchError } from 'rxjs/operators';
+import {map, Observable, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  public cart: ProductDTO[] = [];
-  private readonly httpClient = inject(HttpClient);
+  private readonly cartItemsService = inject(CartItemsService);
 
   constructor() {
-    this.loadCartFromLocalStorage();
   }
 
-  private loadCartFromLocalStorage() {
-    const cartJson = localStorage.getItem('cart');
-    if (cartJson) {
-      this.cart = JSON.parse(cartJson);
-    }
+  getUserCart(userId: number): Observable<any> {
+    return this.cartItemsService
+      .apiUsersUserIdCartGet(userId)
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to fetch user cart:', error);
+          return throwError(() => new Error('Failed to fetch user cart.'));
+        })
+      );
   }
 
-  private saveCartToLocalStorage() {
-    localStorage.setItem('cart', JSON.stringify(this.cart));
-  }
-
-
-
-  addToCart(product: ProductDTO, quantity: number = 1, size: string = '') {
-    this.httpClient.get<StockDTO[]>(`/api/products/${product.id}/stock`).subscribe({
-      next: (response: StockDTO[]) => {
-        const isInStock = response[0].quantity >= quantity;
-        console.log('response', response);
-        console.log('response stock', response[0].quantity);
-        console.log('isInStock', isInStock);
-
-        if (isInStock) {
-          const existingProduct = this.cart.find(item => item.id === product.id);
-          if (existingProduct) {
-            existingProduct.quantity! += quantity;
-            alert(`Updated quantity for product: ${product.name}`);
-          } else {
-            this.cart.push({ ...product, quantity });
-            alert(`Product added to cart: ${product.name}`);
-          }
-          this.saveCartToLocalStorage();
+  addToCart(userId: number, productId: number, quantity: number = 1, size: string = ''): void {
+    this.getUserCart(userId).subscribe({
+      next: (cartItems: any[]) => {
+        // Chercher si un élément correspondant existe déjà dans le panier
+        console.log("entry",productId, size)
+        const existingItem = cartItems.find(item => item.productId === productId && item.size === size);
+        console.log(existingItem)
+        if (existingItem) {
+          // Mettre à jour la quantité
+          const updatedQuantity = existingItem.quantity + quantity;
+          this.cartItemsService.apiUsersUserIdCartProductIdPut(
+            { quantity: updatedQuantity, size },
+            userId,
+            productId
+          ).subscribe({
+            next: () => console.log('Item quantity updated successfully'),
+            error: (err) => console.error('Failed to update item quantity', err),
+          });
         } else {
-          alert(`Product is out of stock: ${product.name}`);
+          // Ajouter un nouvel élément au panier
+          this.cartItemsService.apiUsersUserIdCartPost(
+            { productId, quantity, size },
+            userId
+          ).subscribe({
+            next: () => console.log('Item added to cart successfully'),
+            error: (err) => console.error('Failed to add item to cart', err),
+          });
         }
       },
+      error: (err) => console.error('Failed to fetch user cart', err),
+    });
+  }
+
+  clearUserCart(userId: number): void {
+    this.getUserCart(userId).subscribe({
+      next: (cartItems: any[]) => {
+        const deleteRequests = cartItems.map(item =>
+          this.cartItemsService.apiUsersUserIdCartProductIdDelete(userId, item.productId).toPromise()
+        );
+
+        Promise.all(deleteRequests)
+          .then(() => {
+            console.log('Cart cleared successfully.');
+          })
+          .catch(error => {
+            console.error('Failed to clear the cart:', error);
+          });
+      },
       error: (error) => {
-        console.error('Failed to check stock:', error);
+        console.error('Failed to fetch user cart:', error);
       }
     });
   }

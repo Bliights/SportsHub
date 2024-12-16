@@ -1,60 +1,56 @@
 import { HttpClient } from '@angular/common/http';
 import {inject, Injectable } from '@angular/core';
 import { CartService } from './cart.service';
+import { OrdersService } from '../generated';
+import { OrdersItemsService } from '../generated';
 import { Router } from '@angular/router';
 import { ProductDTO } from './products.service';
+import {CartItem} from './cart-page/cart-page.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly httpClient = inject(HttpClient);
-  private readonly cartService = inject(CartService);
+  private readonly ordersService = inject(OrdersService);
+  private readonly ordersItemsService = inject(OrdersItemsService);
   private readonly router = inject(Router);
 
-  orderItems(userId: number, cartItems: ProductDTO[], total: number) {
-    const orderPayload = { totalPrice: total };
+  orderItems(userId: number, cartItems: CartItem[], total: number): void {
+    // Étape 1 : Créer une commande
+    this.ordersService.apiUsersUserIdOrdersPost({ totalPrice: total }, userId).subscribe({
+      next: (orderResponse: any) => {
+        const orderId = orderResponse.id;
 
-    // Step 1: Create an order
-    this.httpClient.post(`/api/users/${userId}/orders`, orderPayload).subscribe({
-      next: () => {
-        // Step 2: Retrieve the order ID
-        this.httpClient.get<OrderDTO[]>(`/api/users/${userId}/orders`).subscribe({
-          next: (orders: OrderDTO[]) => {
-            const latestOrder = orders.reduce((prev, current) => (prev.createdAt > current.createdAt) ? prev : current);
-            const orderId = latestOrder.id;
+        // Étape 2 : Créer les articles de la commande
+        const orderItemsPayload = cartItems.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          size: item.size,
+          price: item.price,
+        }));
 
-            // Step 3: Create order items
-            const orderItemsPayload = cartItems.map(item => ({
-              productId: item.id,
-              quantity: item.quantity,
-              size: 'M',
-              price: item.price
-            }));
+        const orderItemsRequests = orderItemsPayload.map((orderItem) =>
+          this.ordersItemsService.apiOrdersOrderIdItemsPost(orderItem, orderId).toPromise()
+        );
 
-            orderItemsPayload.forEach(orderItem => {
-              this.httpClient.post(`/api/orders/${orderId}/items`, orderItem).subscribe({
-                next: () => {
-                  console.log('Order item created successfully');
-                },
-                error: (error) => {
-                  console.error('Failed to create order item:', error);
-                }
-              });
-            });
+        // Attendre que tous les articles soient créés
+        Promise.all(orderItemsRequests)
+          .then(() => {
+            console.log('Tous les articles de commande ont été créés avec succès.');
 
-            // Optionally, clear the cart after ordering
-            this.cartService.cart = [];
+            // Optionnel : Vider le panier après la commande
+            // this.cartService.clearCart();
+
+            // Rediriger vers une page de confirmation ou d'accueil
             this.router.navigate(['/']);
-          },
-          error: (error) => {
-            console.error('Failed to retrieve orders:', error);
-          }
-        });
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la création des articles de commande:', error);
+          });
       },
       error: (error) => {
-        console.error('Failed to create order:', error);
-      }
+        console.error('Erreur lors de la création de la commande:', error);
+      },
     });
   }
 }

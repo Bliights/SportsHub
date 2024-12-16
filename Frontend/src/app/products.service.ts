@@ -1,16 +1,48 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import {map, Observable, of, throwError} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ProductsService as SwaggerProductsService } from '../generated';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductsService {
-  private readonly httpClient = inject(HttpClient);
+  private readonly swaggerService = inject(SwaggerProductsService);
 
   getProducts(): Observable<ProductDTO[]> {
-    return this.httpClient.get<ProductDTO[]>('/api/products');
+    return this.swaggerService.apiProductsGet().pipe(
+      map((data: ProductDTO[]) => data.map((item) => new ProductModel(item)))
+    );
+  }
+
+  getProductPrice(productId: number): Observable<number> {
+    return this.swaggerService.apiProductsIdGet(productId).pipe(
+      map((product: any) => {
+        if (!product || typeof product.price !== 'number') {
+          throw new Error(`Invalid product data for ID: ${productId}`);
+        }
+        return product.price; // Retourne le prix
+      }),
+      catchError((error) => {
+        console.error(`Failed to fetch price for product ID: ${productId}`, error);
+        return of(0); // Retourne 0 en cas d'erreur
+      })
+    );
+  }
+  getProductName(productId: number): Observable<string> {
+    return this.swaggerService.apiProductsIdGet(productId).pipe(
+      map((product: any) => {
+        if (!product || typeof product.name !== 'string') {
+          throw new Error(`Invalid product data for ID: ${productId}`);
+        }
+        return product.name; // Retourne le prix
+      }),
+      catchError((error) => {
+        console.error(`Failed to fetch price for product ID: ${productId}`, error);
+        return ""; // Retourne 0 en cas d'erreur
+      })
+    );
   }
 
   constructor() { }

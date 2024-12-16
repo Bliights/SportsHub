@@ -6,6 +6,7 @@ import {NavBarComponent} from '../nav-bar/nav-bar.component';
 import {FormsModule} from '@angular/forms';
 import { CartService } from '../cart.service';
 import { StocksService } from '../../generated';
+import {AuthService} from '../auth.service';
 
 @Component({
   selector: 'app-product-page',
@@ -24,8 +25,13 @@ export class ProductPageComponent implements OnInit {
   quantity: any;
   availableSizes: { size: string; quantity: number }[] = [];
   selectedSize: string | null = null;
+  noStock = false;
 
-  constructor(private route: ActivatedRoute, private productService: ProductsService, private cartService: CartService,private stocksService: StocksService,) {}
+  constructor(private route: ActivatedRoute,
+              private authService: AuthService,
+              private productService: ProductsService,
+              private cartService: CartService,
+              private stocksService: StocksService,) {}
 
   ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('id');
@@ -43,9 +49,15 @@ export class ProductPageComponent implements OnInit {
         size: stock.size,
         quantity: stock.quantity
       }));
-      if (this.availableSizes.length > 0) {
-        this.selectedSize = this.availableSizes[0].size;
+      this.noStock = this.availableSizes.every(size => size.quantity === 0);
+
+      if (!this.noStock && this.availableSizes.length > 0) {
+        this.selectedSize = this.availableSizes.find(size => size.quantity > 0)?.size || null;
+      } else {
+        this.selectedSize = null; // Pas de taille sélectionnable si tout est en rupture
       }
+      console.log(this.availableSizes)
+      console.log(this.noStock)
     });
   }
 
@@ -78,7 +90,7 @@ export class ProductPageComponent implements OnInit {
 
   addToCart(): void {
     if (this.product && this.selectedSize) {
-      this.cartService.addToCart(this.product, this.quantity,  this.selectedSize);
+      this.cartService.addToCart(this.authService.idUser, this.product.id, this.quantity,  this.selectedSize );
     }
   }
 

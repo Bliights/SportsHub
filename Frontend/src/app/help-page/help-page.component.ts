@@ -13,7 +13,6 @@ import {AuthService} from '../auth.service';
     NavBarComponent,
     NgIf,
     NgForOf,
-    RouterLink,
     ReactiveFormsModule,
   ],
   templateUrl: './help-page.component.html',
