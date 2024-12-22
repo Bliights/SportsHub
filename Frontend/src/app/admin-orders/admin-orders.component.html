@@ -1,40 +1,15 @@
 <app-admin-nav-bar></app-admin-nav-bar>
 <div class="container mt-4">
   <h2>Admin Orders</h2>
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>User ID</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let order of orders">
-      <td>{{ order.id }}</td>
-      <td>{{ order.userId }}</td>
-      <td>{{ order.status }}</td>
-      <td>
-        <button class="btn btn-primary" (click)="editOrder(order)">Edit</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="editedOrder" class="edit-form">
-    <h3>Edit Order</h3>
-    <form (ngSubmit)="saveOrder()">
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select id="status" class="form-control" [(ngModel)]="editedOrder.status" name="status" required>
-          <option value="pending">Pending</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-success">Save</button>
-      <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
-    </form>
-  </div>
+  <ag-grid-angular
+    style="width: 100%; height: 550px;"
+    class="ag-theme-alpine"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="{ resizable: true, sortable: true, filter: true,editable: true }"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [modules]="modules"
+    (cellValueChanged)="onCellValueChanged($event)">
+  </ag-grid-angular>
 </div>
