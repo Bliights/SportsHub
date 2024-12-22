@@ -13,6 +13,7 @@ import {AdminInventoryComponent} from './admin-inventory/admin-inventory.compone
 import {AdminOrdersComponent} from './admin-orders/admin-orders.component';
 import {AdminTicketComponent} from './admin-ticket/admin-ticket.component';
 import {RespondTicketComponent} from './respond-ticket/respond-ticket.component';
+import {AdminUserManagementComponent} from './admin-user-management/admin-user-management.component';
 
 
 export const routes: Routes = [
@@ -28,6 +29,7 @@ export const routes: Routes = [
   {path:'admin-inventory',component:AdminInventoryComponent},
   {path:'admin-orders',component:AdminOrdersComponent},
   {path:'admin-tickets',component:AdminTicketComponent},
+  {path:'admin-users-management',component:AdminUserManagementComponent},
   {path: '', component: HomePageComponent},
   {path: 'ticket-response/:id', component: RespondTicketComponent},
 ];
