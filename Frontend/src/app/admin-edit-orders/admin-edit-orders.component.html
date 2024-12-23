@@ -1,0 +1,64 @@
+<app-admin-nav-bar></app-admin-nav-bar>
+<div class="container mt-4">
+  <h2>Order Management</h2>
+
+  <div *ngIf="selectedOrder" class="modal show d-block" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Order</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="selectedOrder = null"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="orderForm" (ngSubmit)="updateOrder()">
+            <div class="mb-3">
+              <label for="status" class="form-label">Status:</label>
+              <select id="status" formControlName="status" class="form-control" required>
+                <option value="pending">Pending</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="totalPrice" class="form-label">Total Price:</label>
+              <input id="totalPrice" formControlName="totalPrice" type="number" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="closedAt" class="form-label">Closed At:</label>
+              <input id="closedAt" formControlName="closedAt" type="date" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>All Orders</h3>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Customer</th>
+      <th>Status</th>
+      <th>Total Price</th>
+      <th>Created At</th>
+      <th>Closed At</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let order of orders">
+      <td>{{ order.id }}</td>
+      <td>{{ order.userId }}</td>
+      <td>{{ order.status }}</td>
+      <td>{{ order.totalPrice }}</td>
+      <td>{{ order.createdAt | date }}</td>
+      <td>{{ order.closedAt | date }}</td>
+      <td>
+        <button (click)="editOrder(order)" class="btn btn-primary">Edit</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -15,6 +15,7 @@ import {AdminTicketComponent} from './admin-ticket/admin-ticket.component';
 import {RespondTicketComponent} from './respond-ticket/respond-ticket.component';
 import {AdminUserManagementComponent} from './admin-user-management/admin-user-management.component';
 import {AdminStatsComponent} from './admin-stats/admin-stats.component';
+import {AdminEditOrdersComponent} from './admin-edit-orders/admin-edit-orders.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   {path:'admin-orders',component:AdminOrdersComponent},
   {path:'admin-tickets',component:AdminTicketComponent},
   {path:'admin-users-management',component:AdminUserManagementComponent},
+  {path:'admin-edit-orders',component:AdminEditOrdersComponent},
   {path:'admin-stats',component:AdminStatsComponent},
   {path: '', component: HomePageComponent},
   {path: 'ticket-response/:id', component: RespondTicketComponent},

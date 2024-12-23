@@ -216,7 +216,7 @@ orderRouter.post("/users/:userId/orders", async (req: Request, res: Response) =>
  */
 orderRouter.put("/orders/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const { status } = req.body;
+    const { status,closedAt, totalPrice } = req.body;
 
     try {
         const order = await Order.findByPk(id);
@@ -226,6 +226,8 @@ orderRouter.put("/orders/:id", async (req: Request, res: Response) => {
         }
 
         order.status = status;
+        order.closedAt=closedAt;
+        order.totalPrice=totalPrice;
         await order.save();
         res.status(200).json(order);
     } catch (error) {
