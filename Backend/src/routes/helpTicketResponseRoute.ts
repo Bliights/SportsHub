@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import HelpTicketResponse from "../models/helpTicketResponse";
+import User from "../models/user";
+import HelpTicket from "../models/helpTicket";
 
 const helpTicketResponseRouter = Router();
 
@@ -9,8 +11,8 @@ const helpTicketResponseRouter = Router();
  *   get:
  *     tags:
  *       - HelpTicketsResponses
- *     summary: Get all responses for a specific help ticket
- *     description: Retrieve all responses associated with a specific help ticket.
+ *     summary: Retrieve all responses for a specific help ticket
+ *     description: Fetch all responses associated with a given help ticket by its ID.
  *     parameters:
  *       - in: path
  *         name: ticketId
@@ -20,32 +22,15 @@ const helpTicketResponseRouter = Router();
  *         description: Unique identifier of the help ticket.
  *     responses:
  *       200:
- *         description: Successfully retrieved responses for the help ticket.
+ *         description: Successfully retrieved all responses for the specified help ticket.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   userId:
- *                     type: integer
- *                     example: 5
- *                   ticketId:
- *                     type: integer
- *                     example: 101
- *                   response:
- *                     type: string
- *                     example: "We are working on your request."
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                     example: "2023-06-15T14:48:00.000Z"
+ *                 $ref: '#/components/schemas/HelpTicketResponse'
  *       404:
- *         description: Help ticket not found or has no responses.
+ *         description: No responses found for the specified help ticket.
  *       500:
  *         description: Internal server error.
  */
@@ -53,11 +38,13 @@ helpTicketResponseRouter.get("/:ticketId/responses", async (req: Request, res: R
     const ticketId = parseInt(req.params.ticketId, 10);
 
     try {
+        // Fetch the help ticket response
         const responses = await HelpTicketResponse.findAll({ where: { ticketId } });
         if (!responses || responses.length === 0) {
             res.status(404).json({ error: "No responses found for this help ticket." });
             return;
         }
+
         res.status(200).json(responses);
     } catch (error) {
         console.error("Error fetching responses for help ticket:", error);
@@ -72,7 +59,7 @@ helpTicketResponseRouter.get("/:ticketId/responses", async (req: Request, res: R
  *     tags:
  *       - HelpTicketsResponses
  *     summary: Add a response to a specific help ticket
- *     description: Submit a response to an existing help ticket, specifying the user in the URL.
+ *     description: Submit a response to an existing help ticket by specifying the user ID and ticket ID in the URL.
  *     parameters:
  *       - in: path
  *         name: ticketId
@@ -97,34 +84,19 @@ helpTicketResponseRouter.get("/:ticketId/responses", async (req: Request, res: R
  *             properties:
  *               response:
  *                 type: string
- *                 description: The content of the response.
- *                 example: "Thank you for your patience. We are resolving the issue."
+ *                 description: The content of the response to be added to the help ticket.
+ *                 example: "Thank you for your patience. We are working on resolving the issue."
  *     responses:
  *       201:
  *         description: Response added to the help ticket successfully.
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1
- *                 userId:
- *                   type: integer
- *                   example: 5
- *                 ticketId:
- *                   type: integer
- *                   example: 101
- *                 response:
- *                   type: string
- *                   example: "Thank you for your patience. We are resolving the issue."
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                   example: "2023-06-15T14:48:00.000Z"
+ *               $ref: '#/components/schemas/HelpTicketResponse'
+ *       400:
+ *         description: Invalid input or missing required field(s).
  *       404:
- *         description: Help ticket not found.
+ *         description: Help ticket or user not found.
  *       500:
  *         description: Internal server error.
  */
@@ -134,12 +106,31 @@ helpTicketResponseRouter.post("/:ticketId/responses/:userId", async (req: Reques
     const { response } = req.body;
 
     try {
-        if (!response) {
+        // Validate input
+        if (!response || typeof response !== 'string') {
             res.status(400).json({ error: "Missing required field: response." });
             return;
         }
 
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
+        // Check if the ticket exists
+        const ticketExists = await HelpTicket.findByPk(ticketId);
+        if (!ticketExists) {
+            res.status(404).json({ error: "Ticket not found." });
+            return;
+        }
+
+        // Create response
         const newResponse = await HelpTicketResponse.create({ userId, ticketId, response });
+        ticketExists.updatedAt = new Date();
+        await ticketExists.save();
+
         res.status(201).json(newResponse);
     } catch (error) {
         console.error("Error adding response to help ticket:", error);

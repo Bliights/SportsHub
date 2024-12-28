@@ -17,9 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { InlineResponse200 } from '../model/inlineResponse200';
+import { Preference } from '../model/preference';
 import { UserIdPreferencesBody } from '../model/userIdPreferencesBody';
-import { UserIdPreferencesBody1 } from '../model/userIdPreferencesBody1';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -58,55 +57,15 @@ export class PreferencesService {
 
 
     /**
-     * Delete preferences of a user
-     * Remove the preferences of a specific user by their ID.
-     * @param userId Unique identifier of the user.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiUsersUserIdPreferencesDelete(userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdPreferencesDelete(userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdPreferencesDelete(userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsersUserIdPreferencesDelete(userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdPreferencesDelete.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<any>('delete',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Retrieve preferences of a specific user
      * Fetch the preferences of a user by their unique ID.
      * @param userId Unique identifier of the user.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse200>;
-    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse200>>;
-    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse200>>;
+    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'body', reportProgress?: boolean): Observable<Preference>;
+    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Preference>>;
+    public apiUsersUserIdPreferencesGet(userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Preference>>;
     public apiUsersUserIdPreferencesGet(userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (userId === null || userId === undefined) {
@@ -128,59 +87,8 @@ export class PreferencesService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<InlineResponse200>('get',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
+        return this.httpClient.request<Preference>('get',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
             {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Create preferences for a user
-     * Add a new set of preferences for a specific user.
-     * @param body 
-     * @param userId Unique identifier of the user.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiUsersUserIdPreferencesPost(body: UserIdPreferencesBody1, userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdPreferencesPost(body: UserIdPreferencesBody1, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdPreferencesPost(body: UserIdPreferencesBody1, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsersUserIdPreferencesPost(body: UserIdPreferencesBody1, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling apiUsersUserIdPreferencesPost.');
-        }
-
-        if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdPreferencesPost.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
-        return this.httpClient.request<any>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
-            {
-                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -197,9 +105,9 @@ export class PreferencesService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<Preference>;
+    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Preference>>;
+    public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Preference>>;
     public apiUsersUserIdPreferencesPut(body: UserIdPreferencesBody, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -214,6 +122,7 @@ export class PreferencesService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -229,7 +138,7 @@ export class PreferencesService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
+        return this.httpClient.request<Preference>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/preferences`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

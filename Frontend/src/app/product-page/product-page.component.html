@@ -1,62 +1,57 @@
 <app-nav-bar></app-nav-bar>
-<div class="product-container mt-4" *ngIf="product">
-  <img [src]="product.imageUrl" alt="Product Image" class="product-image">
-  <div class="product-details">
-    <h2 class="product-title">{{ product.name }}</h2>
-    <p class="product-description">{{ product.description }}</p>
-    <p class="product-price"><strong>Price:</strong> {{ product.price }}€</p>
-    <p class="product-category"><strong>Category:</strong> {{ product.category }}</p>
-    <p class="product-brand"><strong>Brand:</strong> {{ product.brand }}</p>
+<div class="background-container vh-100" (click)="goHome()">
+  <div class="d-flex justify-content-center align-items-center vh-100 ">
+    <div class="card shadow-lg" style="max-width: 600px; width: 100%;" (click)="$event.stopPropagation()">
+      <img [src]="product.imageUrl" alt="Product Image" class="card-img-top img-fluid rounded-top" style="object-fit: contain; height: 300px;">
 
-    <!-- Si des tailles sont disponibles -->
-    <div *ngIf="!noStock ; else outOfStock">
-      <div class="form-group row mt-3">
-        <label for="size" class="col-sm-2 col-form-label">Select Size:</label>
-        <div class="col-sm-10">
-          <select
-            id="size"
-            class="form-control"
-            [(ngModel)]="selectedSize"
-            (change)="onSizeChange()">
-            <option
-              *ngFor="let size of availableSizes"
-              [value]="size.size">
-              {{ size.size }}
-            </option>
-          </select>
+      <div class="card-body">
+        <h2 class="card-title text-center text-primary">{{ product.name }}</h2>
+        <p class="card-text text-muted text-center">{{ product.description }}</p>
+        <hr>
+        <p class="mb-2"><strong>Price:</strong> {{ product.price }}€</p>
+        <p class="mb-2"><strong>Brand:</strong> {{ product.brand }}</p>
+
+        <div *ngIf="stocks.length > 0; else outOfStock">
+          <!-- Size selection if there is so stock -->
+          <div class="mb-2" *ngIf="size !== 'Standard'">
+            <label for="size" class="form-label"><strong>Select Size:</strong></label>
+            <select id="size" class="form-select" [(ngModel)]="size" (change)="validateQuantity()">
+              <option *ngFor="let stock of stocks" [value]="stock.size">
+                {{ stock.size }}
+              </option>
+            </select>
+          </div>
+
+          <p class="mb-2"><strong>Stock:</strong> {{ getStockForSelectedSize() }}</p>
+
+          <div class="mb-2">
+            <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+            <input id="quantity"
+              type="number"
+              class="form-control"
+              [(ngModel)]="quantity"
+              [min]="1"
+              [max]="getStockForSelectedSize()"
+              (blur)="validateQuantity()"
+            />
+          </div>
+
+          <div class="d-grid">
+            <button
+              class="btn btn-dark"
+              [disabled]="!getStockForSelectedSize()"
+              (click)="addToCart()"
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Stock et quantité -->
-      <p class="mt-3">
-        <strong>Stock:</strong> {{ getStockForSelectedSize() }}
-      </p>
-
-      <div class="form-group row">
-        <label for="quantity" class="col-sm-2 col-form-label">Quantity:</label>
-        <div class="col-sm-10">
-          <input
-            id="quantity"
-            type="number"
-            class="form-control"
-            [(ngModel)]="quantity"
-            [min]="1"
-            [max]="getStockForSelectedSize()"
-            (input)="validateQuantity($event)">
-        </div>
-
-        <button
-          class="btn btn-dark mt-3"
-          [disabled]="!isQuantityValid()"
-          (click)="addToCart()">
-          Add to Cart
-        </button>
+        <!-- Text when out of stock -->
+        <ng-template #outOfStock>
+          <p class="text-danger text-center fw-bold mt-3">Out of stock.</p>
+        </ng-template>
       </div>
     </div>
-
-    <!-- Stock global épuisé -->
-    <ng-template #outOfStock>
-      <p class="text-danger">Out of stock.</p>
-    </ng-template>
   </div>
 </div>

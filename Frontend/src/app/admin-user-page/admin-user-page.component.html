@@ -1,0 +1,18 @@
+<app-admin-nav-bar></app-admin-nav-bar>
+<div class="container mt-4" style="height: 80vh;">
+  <h2>Admin Users</h2>
+
+  <!-- Ag-Grid Table for the user-->
+  <ag-grid-angular
+    style="width: 100%; height: 80%;"
+    class="ag-theme-alpine"
+    [rowData]="users"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="true"
+    [paginationPageSize]="paginationPageSize"
+    [paginationPageSizeSelector]="paginationPageSizeSelector"
+    (cellValueChanged)="onUserChanged($event)">
+  </ag-grid-angular>
+</div>
+

@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { Order } from '../model/order';
 import { OrdersIdBody } from '../model/ordersIdBody';
-import { UserIdOrdersBody } from '../model/userIdOrdersBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -57,8 +57,8 @@ export class OrdersService {
 
 
     /**
-     * Get all orders
-     * Retrieve all orders in the system.
+     * Retrieve all orders
+     * Fetch a list of all orders available in the system.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -93,9 +93,9 @@ export class OrdersService {
     }
 
     /**
-     * Cancel or delete an order
-     * Remove a specific order from the system.
-     * @param id Unique identifier of the order.
+     * Delete an order
+     * Remove a specific order from the system using its unique identifier.
+     * @param id The unique identifier of the order to delete.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -133,15 +133,15 @@ export class OrdersService {
     }
 
     /**
-     * Get details of a specific order
-     * Retrieve details of a specific order by its ID.
+     * Retrieve details of a specific order
+     * Fetch detailed information about an order by its ID.
      * @param id Unique identifier of the order.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiOrdersIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiOrdersIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiOrdersIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiOrdersIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<Order>;
+    public apiOrdersIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Order>>;
+    public apiOrdersIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Order>>;
     public apiOrdersIdGet(id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -152,6 +152,7 @@ export class OrdersService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -162,7 +163,7 @@ export class OrdersService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/api/orders/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Order>('get',`${this.basePath}/api/orders/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -174,15 +175,15 @@ export class OrdersService {
 
     /**
      * Update an order
-     * Update details of a specific order (e.g., change status).
+     * Update the status of an order using its unique identifier.
      * @param body 
-     * @param id Unique identifier of the order.
+     * @param id The unique identifier of the order to update.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<Order>;
+    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Order>>;
+    public apiOrdersIdPut(body: OrdersIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Order>>;
     public apiOrdersIdPut(body: OrdersIdBody, id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -197,6 +198,7 @@ export class OrdersService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -212,7 +214,7 @@ export class OrdersService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/api/orders/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Order>('put',`${this.basePath}/api/orders/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -224,8 +226,8 @@ export class OrdersService {
     }
 
     /**
-     * Get all orders for a specific user
-     * Retrieve all orders placed by a specific user.
+     * Retrieve orders for a specific user
+     * Fetch all orders placed by a specific user, identified by their user ID.
      * @param userId Unique identifier of the user.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -243,6 +245,7 @@ export class OrdersService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -264,21 +267,16 @@ export class OrdersService {
     }
 
     /**
-     * Place a new order for a user
-     * Create a new order for a specific user.
-     * @param body 
+     * Create a new order for a user
+     * Place a new order for a user by specifying their user ID.
      * @param userId Unique identifier of the user.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdOrdersPost(body: UserIdOrdersBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdOrdersPost(body: UserIdOrdersBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdOrdersPost(body: UserIdOrdersBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsersUserIdOrdersPost(body: UserIdOrdersBody, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling apiUsersUserIdOrdersPost.');
-        }
+    public apiUsersUserIdOrdersPost(userId: any, observe?: 'body', reportProgress?: boolean): Observable<Order>;
+    public apiUsersUserIdOrdersPost(userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Order>>;
+    public apiUsersUserIdOrdersPost(userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Order>>;
+    public apiUsersUserIdOrdersPost(userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (userId === null || userId === undefined) {
             throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdOrdersPost.');
@@ -288,6 +286,7 @@ export class OrdersService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -296,16 +295,10 @@ export class OrdersService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json'
         ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/orders`,
+        return this.httpClient.request<Order>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/orders`,
             {
-                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

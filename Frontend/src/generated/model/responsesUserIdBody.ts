@@ -12,7 +12,7 @@
 
 export interface ResponsesUserIdBody { 
     /**
-     * The content of the response.
+     * The content of the response to be added to the help ticket.
      */
     response: any;
 }

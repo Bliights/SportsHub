@@ -11,6 +11,12 @@
  */
 
 export interface ReviewsIdBody { 
+    /**
+     * Rating of the review. Must be between 1 and 5.
+     */
     rating?: any;
+    /**
+     * Updated comment for the review.
+     */
     comment?: any;
 }

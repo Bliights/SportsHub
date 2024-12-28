@@ -1,14 +1,16 @@
-// src/app/search-bar/search-bar.component.ts
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SearchService } from '../search.service';
+import {SearchService} from '../search.service';
+import {FormsModule} from '@angular/forms';
+import {ProductAreaComponent} from '../product-area/product-area.component';
 
 @Component({
   selector: 'app-search-bar',
-  templateUrl: './search-bar.component.html',
   standalone: true,
-  imports: [FormsModule],
-  styleUrls: ['./search-bar.component.css']
+  imports: [
+    FormsModule
+  ],
+  templateUrl: './search-bar.component.html',
+  styleUrl: './search-bar.component.css'
 })
 export class SearchBarComponent {
   searchQuery: string = '';

@@ -3,13 +3,14 @@
   <button class="btn btn-primary" (click)="helpCenter()">back to list</button>
 </div>
 <div class="message-container">
+  <!-- View message -->
   <div #messageBox class="message-box">
     <div
       *ngFor="let response of responses"
       class="message"
       [ngClass]="{
-        'sent': response.userId === idUser,
-        'received': response.userId !== idUser
+        'sent': response.userId === userId,
+        'received': response.userId !== userId
       }"
     >
       <p class="message-content">{{ response.response }}</p>
@@ -21,6 +22,7 @@
   </div>
 </div>
 
+<!-- Response of the user -->
 <div class="text-center mt-3">
   <form [formGroup]="responseForm" (ngSubmit)="sendResponse()">
     <div class="d-flex justify-content-center align-items-center">

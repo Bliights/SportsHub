@@ -1,26 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand mx-3">Admin Panel</a>
   <div class="collapse navbar-collapse">
-    <ul class="navbar-nav me-auto">
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-inventory">Inventory</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-orders">Orders Spreadsheet</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-edit-orders">Edit Orders</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-tickets">Tickets</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-users-management">Users</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link btn btn-outline-secondary" routerLink="/admin-stats">Stats</a>
-      </li>
-    </ul>
-    <button class="btn btn-danger ms-auto" (click)="logout()">Logout</button>
+    <div class="collapse navbar-collapse">
+      <div class="d-flex flex-wrap">
+        <button class="btn btn-outline-info me-2" (click)="navigateTo('admin-orders')">Orders</button>
+        <button class="btn btn-outline-info me-2" (click)="navigateTo('admin-inventory')">Product Inventory</button>
+        <button class="btn btn-outline-info me-2" (click)="navigateTo('admin-tickets')">Tickets</button>
+        <button class="btn btn-outline-info me-2" (click)="navigateTo('admin-users-management')">Users</button>
+        <button class="btn btn-outline-info me-2" (click)="navigateTo('admin-stats')">Stats</button>
+        <button class="btn btn-danger ms-auto" (click)="logout()">Logout</button>
+      </div>
+    </div>
   </div>
 </nav>

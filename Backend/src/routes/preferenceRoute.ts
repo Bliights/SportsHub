@@ -4,8 +4,6 @@ import User from "../models/user";
 
 const preferenceRouter = Router();
 
-
-
 /**
  * @openapi
  * /api/users/{userId}/preferences:
@@ -27,23 +25,7 @@ const preferenceRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1
- *                 userId:
- *                   type: integer
- *                   example: 1
- *                 receiveNotification:
- *                   type: boolean
- *                   example: true
- *                 theme:
- *                   type: string
- *                   example: "dark"
- *                 newsLetter:
- *                   type: boolean
- *                   example: false
+ *               $ref: '#/components/schemas/Preference'
  *       404:
  *         description: Preferences not found for the given user ID.
  *       500:
@@ -53,6 +35,13 @@ preferenceRouter.get("/:userId/preferences", async (req: Request, res: Response)
     const userId = parseInt(req.params.userId, 10);
 
     try {
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
         const preferences = await Preference.findOne({ where: { userId } });
         if (!preferences) {
             res.status(404).json({ error: "Preferences not found." });
@@ -61,80 +50,6 @@ preferenceRouter.get("/:userId/preferences", async (req: Request, res: Response)
         res.status(200).json(preferences);
     } catch (error) {
         console.error("Error fetching preferences:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-/**
- * @openapi
- * /api/users/{userId}/preferences:
- *   post:
- *     tags:
- *       - Preferences
- *     summary: Create preferences for a user
- *     description: Add a new set of preferences for a specific user.
- *     parameters:
- *       - in: path
- *         name: userId
- *         schema:
- *           type: integer
- *         required: true
- *         description: Unique identifier of the user.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               receiveNotification:
- *                 type: boolean
- *                 example: true
- *               theme:
- *                 type: string
- *                 example: "dark"
- *               newsLetter:
- *                 type: boolean
- *                 example: true
- *     responses:
- *       201:
- *         description: Successfully created the preferences.
- *       400:
- *         description: Invalid input or missing required fields.
- *       404:
- *         description: User not found.
- *       409:
- *         description: Preferences already exist for this user.
- *       500:
- *         description: Internal server error.
- */
-preferenceRouter.post("/:userId/preferences", async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-    const { receiveNotification, theme, newsLetter } = req.body;
-
-    try {
-        if (!userId || receiveNotification === undefined || !theme || newsLetter === undefined) {
-            res.status(400).json({ error: "Mandatory fields are missing or invalid." });
-            return;
-        }
-
-        // Check if the user exists
-        const userExists = await User.findByPk(userId);
-        if (!userExists) {
-            res.status(404).json({ error: "User not found." });
-            return;
-        }
-
-        // Check if preferences already exist for the user
-        const existingPreferences = await Preference.findOne({ where: { userId } });
-        if (existingPreferences) {
-            res.status(409).json({ error: "Preferences already exist for this user." });
-            return;
-        }
-        const preferences = await Preference.create({ userId, receiveNotification, theme, newsLetter });
-        res.status(201).json(preferences);
-    } catch (error) {
-        console.error("Error creating preferences:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });
@@ -163,16 +78,26 @@ preferenceRouter.post("/:userId/preferences", async (req: Request, res: Response
  *             properties:
  *               receiveNotification:
  *                 type: boolean
+ *                 description: Whether the user wants to receive notifications.
  *                 example: true
  *               theme:
  *                 type: string
+ *                 enum: ["light", "dark"]
+ *                 description: The theme preference of the user.
  *                 example: "dark"
  *               newsLetter:
  *                 type: boolean
+ *                 description: Whether the user wants to subscribe to newsletters.
  *                 example: true
  *     responses:
  *       200:
  *         description: Successfully updated the preferences.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Preference'
+ *       400:
+ *         description: Invalid input data.
  *       404:
  *         description: Preferences not found for the given user ID.
  *       500:
@@ -183,6 +108,22 @@ preferenceRouter.put("/:userId/preferences", async (req: Request, res: Response)
     const { receiveNotification, theme, newsLetter } = req.body;
 
     try {
+        // Validate input types
+        if ((receiveNotification !== undefined && typeof receiveNotification !== "boolean") ||
+            (theme !== undefined && !["light", "dark"].includes(theme)) ||
+            (newsLetter !== undefined && typeof newsLetter !== "boolean")
+        ) {
+            res.status(400).json({ error: "Mandatory fields are missing or invalid." });
+            return;
+        }
+
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
         const preferences = await Preference.findOne({ where: { userId } });
         if (!preferences) {
             res.status(404).json({ error: "Preferences not found." });
@@ -199,47 +140,6 @@ preferenceRouter.put("/:userId/preferences", async (req: Request, res: Response)
         res.status(200).json(updatedPreferences);
     } catch (error) {
         console.error("Error updating preferences:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-/**
- * @openapi
- * /api/users/{userId}/preferences:
- *   delete:
- *     tags:
- *       - Preferences
- *     summary: Delete preferences of a user
- *     description: Remove the preferences of a specific user by their ID.
- *     parameters:
- *       - in: path
- *         name: userId
- *         schema:
- *           type: integer
- *         required: true
- *         description: Unique identifier of the user.
- *     responses:
- *       200:
- *         description: Successfully deleted the preferences.
- *       404:
- *         description: Preferences not found for the given user ID.
- *       500:
- *         description: Internal server error.
- */
-preferenceRouter.delete("/:userId/preferences", async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    try {
-        const preferences = await Preference.findOne({ where: { userId } });
-        if (!preferences) {
-            res.status(404).json({ error: "Preferences not found." });
-            return;
-        }
-
-        await preferences.destroy();
-        res.status(200).json({ message: "Preferences deleted successfully." });
-    } catch (error) {
-        console.error("Error deleting preferences:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });

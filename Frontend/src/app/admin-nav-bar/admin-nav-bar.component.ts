@@ -1,22 +1,28 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth.service';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-admin-nav-bar',
-  templateUrl: './admin-nav-bar.component.html',
   standalone: true,
   imports: [
     RouterLink
   ],
-  styleUrls: ['./admin-nav-bar.component.css']
+  templateUrl: './admin-nav-bar.component.html',
+  styleUrl: './admin-nav-bar.component.css'
 })
 export class AdminNavBarComponent {
 
-  constructor(private router: Router, private authService:AuthService) {}
+  constructor(private authService: AuthService , private router: Router) {}
 
+  // Logout the user
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Navigate to a specific route
+  navigateTo(route: string): void {
+    this.router.navigate([`/${route}`]);
   }
 }

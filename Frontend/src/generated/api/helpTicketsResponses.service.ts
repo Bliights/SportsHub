@@ -17,7 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { InlineResponse2011 } from '../model/inlineResponse2011';
+import { HelpTicketResponse } from '../model/helpTicketResponse';
 import { ResponsesUserIdBody } from '../model/responsesUserIdBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -57,8 +57,8 @@ export class HelpTicketsResponsesService {
 
 
     /**
-     * Get all responses for a specific help ticket
-     * Retrieve all responses associated with a specific help ticket.
+     * Retrieve all responses for a specific help ticket
+     * Fetch all responses associated with a given help ticket by its ID.
      * @param ticketId Unique identifier of the help ticket.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -99,16 +99,16 @@ export class HelpTicketsResponsesService {
 
     /**
      * Add a response to a specific help ticket
-     * Submit a response to an existing help ticket, specifying the user in the URL.
+     * Submit a response to an existing help ticket by specifying the user ID and ticket ID in the URL.
      * @param body 
      * @param ticketId Unique identifier of the help ticket.
      * @param userId Unique identifier of the user submitting the response.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse2011>;
-    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse2011>>;
-    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse2011>>;
+    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'body', reportProgress?: boolean): Observable<HelpTicketResponse>;
+    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<HelpTicketResponse>>;
+    public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<HelpTicketResponse>>;
     public apiHelpTicketsTicketIdResponsesUserIdPost(body: ResponsesUserIdBody, ticketId: any, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -143,7 +143,7 @@ export class HelpTicketsResponsesService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<InlineResponse2011>('post',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(ticketId))}/responses/${encodeURIComponent(String(userId))}`,
+        return this.httpClient.request<HelpTicketResponse>('post',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(ticketId))}/responses/${encodeURIComponent(String(userId))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

@@ -11,7 +11,16 @@
  */
 
 export interface UserIdCartBody { 
-    productId: any;
-    quantity: any;
-    size: any;
+    /**
+     * Unique identifier of the product to be added to the cart.
+     */
+    productId?: any;
+    /**
+     * Quantity of the product to add to the cart.
+     */
+    quantity?: any;
+    /**
+     * Size of the product.
+     */
+    size?: any;
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 
@@ -10,38 +10,43 @@ import {Router} from '@angular/router';
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent {
-  constructor(private authService: AuthService, private router: Router) {
-  }
+
+  constructor(private authService: AuthService , private router: Router) {}
+
+  // Redirect to the Edit profile page
   onClickEditProfile() {
     //if connected redirect to Profile page, else, redirect to login page
     if(this.authService.isAuthenticated){
       this.router.navigate(['/edit-account'])
     }else{
-      //redirect to login page
       this.router.navigate(['/login'])
 
     }
   }
 
+  // Redirect to the cart page
   onClickCart() {
+    //if connected redirect to Profile page, else, redirect to login page
     if(this.authService.isAuthenticated){
       this.router.navigate(['/cart']);
     }else{
       this.router.navigate(['/login']);
-
     }
   }
 
+  // Redirect to the help page
   onClickHelp() {
+    //if connected redirect to Profile page, else, redirect to login page
     if(this.authService.isAuthenticated){
       this.router.navigate(['/help']);
     }else{
       this.router.navigate(['/login']);
-
     }
   }
 
+  // Redirect to the preferences page
   onClickPreferences() {
+    //if connected redirect to Profile page, else, redirect to login page
     if (this.authService.isAuthenticated) {
       this.router.navigate(['/preferences']);
     } else {
@@ -49,9 +54,11 @@ export class NavBarComponent {
     }
   }
 
+  // Redirect to the orders page
   onClickOrders() {
+    //if connected redirect to Profile page, else, redirect to login page
     if (this.authService.isAuthenticated) {
-      this.router.navigate(['/user-orders']);
+      this.router.navigate(['/orders']);
     } else {
       this.router.navigate(['/login']);
     }

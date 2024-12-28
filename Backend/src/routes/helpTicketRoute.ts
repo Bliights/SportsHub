@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import HelpTicket from "../models/helpTicket";
 import User from "../models/user";
+import HelpTicketResponse from "../models/helpTicketResponse";
 
 const helpTicketRouter = Router();
 
@@ -20,31 +21,7 @@ const helpTicketRouter = Router();
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   userId:
- *                     type: integer
- *                     example: 1
- *                   subject:
- *                     type: string
- *                     example: "Delivery Issue"
- *                   description:
- *                     type: string
- *                     example: "My order hasn’t arrived yet."
- *                   status:
- *                     type: string
- *                     example: "open"
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                     example: "2023-06-15T14:48:00.000Z"
- *                   closedAt:
- *                     type: string
- *                     format: date-time
- *                     example: null
+ *                 $ref: '#/components/schemas/HelpTicket'
  *       500:
  *         description: Internal server error.
  */
@@ -76,21 +53,34 @@ helpTicketRouter.get("/help-tickets", async (req: Request, res: Response) => {
  *     responses:
  *       200:
  *         description: Successfully retrieved help tickets for the user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/HelpTicket'
  *       404:
- *         description: User not found or no help tickets exist.
+ *         description: User not found or no help tickets exist for the user.
  *       500:
  *         description: Internal server error.
  */
 helpTicketRouter.get("/users/:userId/help-tickets", async (req: Request, res: Response) => {
     const userId = parseInt(req.params.userId, 10);
     try {
-        const user = await User.findByPk(userId);
-        if (!user) {
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
             res.status(404).json({ error: "User not found." });
             return;
         }
 
+        // Fetch help tickets for the user
         const tickets = await HelpTicket.findAll({ where: { userId } });
+        if (!tickets || tickets.length===0) {
+            res.status(404).json({ error: "No tickets found for this user." });
+            return;
+        }
+
         res.status(200).json(tickets);
     } catch (error) {
         console.error("Error fetching user help tickets:", error);
@@ -116,6 +106,10 @@ helpTicketRouter.get("/users/:userId/help-tickets", async (req: Request, res: Re
  *     responses:
  *       200:
  *         description: Successfully retrieved the help ticket.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HelpTicket'
  *       404:
  *         description: Help ticket not found.
  *       500:
@@ -124,11 +118,13 @@ helpTicketRouter.get("/users/:userId/help-tickets", async (req: Request, res: Re
 helpTicketRouter.get("/help-tickets/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
     try {
+        // Fetch the help ticket by its ID
         const ticket = await HelpTicket.findByPk(id);
         if (!ticket) {
             res.status(404).json({ error: "Help ticket not found." });
             return;
         }
+
         res.status(200).json(ticket);
     } catch (error) {
         console.error("Error fetching help ticket:", error);
@@ -163,21 +159,23 @@ helpTicketRouter.get("/help-tickets/:id", async (req: Request, res: Response) =>
  *             properties:
  *               subject:
  *                 type: string
+ *                 example: "Problem with ..."
  *                 description: The subject of the help ticket.
- *                 example: "Delivery Issue"
  *               description:
  *                 type: string
+ *                 example: "I got a pb with ..."
  *                 description: A detailed description of the issue or request.
- *                 example: "My order hasn’t arrived yet."
  *     responses:
  *       201:
- *         description: Successfully created the preferences.
+ *         description: Help ticket created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HelpTicket'
  *       400:
  *         description: Invalid input or missing required fields.
  *       404:
  *         description: User not found.
- *       409:
- *         description: Preferences already exist for this user.
  *       500:
  *         description: Internal server error.
  */
@@ -186,7 +184,22 @@ helpTicketRouter.post("/users/:userId/help-tickets", async (req: Request, res: R
     const { subject, description } = req.body;
 
     try {
+        // Validate input
+        if (!subject || !description || typeof subject !== 'string' || typeof description !== 'string') {
+            res.status(400).json({ error: "Missing required fields: 'subject' and 'description' are mandatory." });
+            return;
+        }
+
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
+        // Create the help ticket
         const ticket = await HelpTicket.create({ userId, subject, description });
+
         res.status(201).json(ticket);
     } catch (error) {
         console.error("Error creating help ticket:", error);
@@ -201,7 +214,7 @@ helpTicketRouter.post("/users/:userId/help-tickets", async (req: Request, res: R
  *     tags:
  *       - HelpTickets
  *     summary: Update an existing help ticket
- *     description: Update details of a help ticket by its ID.
+ *     description: Update details of a help ticket by its ID, such as its status.
  *     parameters:
  *       - in: path
  *         name: id
@@ -215,13 +228,22 @@ helpTicketRouter.post("/users/:userId/help-tickets", async (req: Request, res: R
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - status
  *             properties:
  *               status:
  *                 type: string
- *                 example: "resolved"
+ *                 example: "in_progress"
+ *                 description: The updated status of the help ticket.
  *     responses:
  *       200:
  *         description: Help ticket updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HelpTicket'
+ *       400:
+ *         description: Invalid input or missing required fields.
  *       404:
  *         description: Help ticket not found.
  *       500:
@@ -232,14 +254,29 @@ helpTicketRouter.put("/help-tickets/:id", async (req: Request, res: Response) =>
     const { status } = req.body;
 
     try {
+        // Validate input
+        if (!status || !["open", "in_progress", "closed"].includes(status)) {
+            res.status(400).json({
+                error: "Invalid input. 'status' is required and must be one of 'open', 'in_progress', 'closed'.",
+            });
+            return;
+        }
+
+        // Find the help ticket by ID
         const ticket = await HelpTicket.findByPk(id);
         if (!ticket) {
             res.status(404).json({ error: "Help ticket not found." });
             return;
         }
 
+        // Update the ticket status
         ticket.status = status;
+        ticket.updatedAt = new Date();
+
+        // Set closedAt for "resolved" or "closed" statuses
+        ticket.closedAt = ["closed"].includes(status) ? new Date() : null;
         await ticket.save();
+
         res.status(200).json(ticket);
     } catch (error) {
         console.error("Error updating help ticket:", error);
@@ -274,13 +311,19 @@ helpTicketRouter.delete("/help-tickets/:id", async (req: Request, res: Response)
     const id = parseInt(req.params.id, 10);
 
     try {
+        // Find the help ticket by its ID
         const ticket = await HelpTicket.findByPk(id);
         if (!ticket) {
             res.status(404).json({ error: "Help ticket not found." });
             return;
         }
 
+        // Delete all responses associated with the help ticket
+        const deletedResponsesCount = await HelpTicketResponse.destroy({ where: { ticketId: id } });
+
+        // Delete the ticket from the database
         await ticket.destroy();
+
         res.status(200).json({ message: "Help ticket deleted successfully." });
     } catch (error) {
         console.error("Error deleting help ticket:", error);

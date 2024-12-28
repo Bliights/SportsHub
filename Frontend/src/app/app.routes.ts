@@ -1,39 +1,37 @@
 import { Routes } from '@angular/router';
-import {SignUpComponent} from './sign-up/sign-up.component';
-import {LoginComponent} from './login/login.component';
 import {HomePageComponent} from './home-page/home-page.component';
-import {EditAccountComponent} from './edit-account/edit-account.component';
-import { CartPageComponent } from './cart-page/cart-page.component';
-import { HelpPageComponent } from './help-page/help-page.component';
-import { ViewTicketComponent } from './view-ticket/view-ticket.component';
-import {ProductPageComponent} from './product-page/product-page.component';
-import {UserOrdersComponent} from './user-orders/user-orders.component';
+import {LoginPageComponent} from './login-page/login-page.component';
+import {SignUpPageComponent} from './sign-up-page/sign-up-page.component';
+import {CartPageComponent} from './cart-page/cart-page.component';
+import {EditAccountPageComponent} from './edit-account-page/edit-account-page.component';
+import {HelpPageComponent} from './help-page/help-page.component';
+import {ViewTicketComponent} from './view-ticket/view-ticket.component';
 import {PreferencePageComponent} from './preference-page/preference-page.component';
-import {AdminInventoryComponent} from './admin-inventory/admin-inventory.component';
-import {AdminOrdersComponent} from './admin-orders/admin-orders.component';
-import {AdminTicketComponent} from './admin-ticket/admin-ticket.component';
-import {RespondTicketComponent} from './respond-ticket/respond-ticket.component';
-import {AdminUserManagementComponent} from './admin-user-management/admin-user-management.component';
-import {AdminStatsComponent} from './admin-stats/admin-stats.component';
-import {AdminEditOrdersComponent} from './admin-edit-orders/admin-edit-orders.component';
+import {OrdersPageComponent} from './orders-page/orders-page.component';
+import {ProductPageComponent} from './product-page/product-page.component';
+import {AdminOrdersPageComponent} from './admin-orders-page/admin-orders-page.component';
+import {AdminInventoryPageComponent} from './admin-inventory-page/admin-inventory-page.component';
+import {AdminTicketPageComponent} from './admin-ticket-page/admin-ticket-page.component';
+import {AdminViewTicketComponent} from './admin-view-ticket/admin-view-ticket.component';
+import {AdminUserPageComponent} from './admin-user-page/admin-user-page.component';
+import {AdminStatPageComponent} from './admin-stat-page/admin-stat-page.component';
 
 
 export const routes: Routes = [
-  {path:'sign-up', component: SignUpComponent},
-  {path: 'login', component: LoginComponent},
-  {path:'edit-account', component: EditAccountComponent},
+  {path: '', component: HomePageComponent},
+  {path: 'login', component: LoginPageComponent},
+  {path:'sign-up', component: SignUpPageComponent},
   {path: 'cart', component: CartPageComponent},
+  {path: 'edit-account', component: EditAccountPageComponent},
   {path: 'help', component: HelpPageComponent},
   {path: 'ticket/:id', component: ViewTicketComponent},
-  { path: 'user-orders', component: UserOrdersComponent },
-  { path: 'product/:id', component: ProductPageComponent },
-  {path:'preferences',component:PreferencePageComponent},
-  {path:'admin-inventory',component:AdminInventoryComponent},
-  {path:'admin-orders',component:AdminOrdersComponent},
-  {path:'admin-tickets',component:AdminTicketComponent},
-  {path:'admin-users-management',component:AdminUserManagementComponent},
-  {path:'admin-edit-orders',component:AdminEditOrdersComponent},
-  {path:'admin-stats',component:AdminStatsComponent},
-  {path: '', component: HomePageComponent},
-  {path: 'ticket-response/:id', component: RespondTicketComponent},
+  {path: 'preferences',component: PreferencePageComponent},
+  {path: 'orders', component: OrdersPageComponent },
+  {path: 'product/:id', component: ProductPageComponent },
+  {path:'admin-orders',component: AdminOrdersPageComponent},
+  {path:'admin-inventory',component: AdminInventoryPageComponent},
+  {path:'admin-tickets',component: AdminTicketPageComponent},
+  {path: 'admin-tickets/:id', component: AdminViewTicketComponent},
+  {path: 'admin-users-management', component: AdminUserPageComponent},
+  {path: 'admin-stats', component: AdminStatPageComponent},
 ];

@@ -1,0 +1,136 @@
+<app-admin-nav-bar></app-admin-nav-bar>
+<div class="container mt-4">
+  <h2>Product Inventory</h2>
+  <div class="d-flex justify-content-between mb-3">
+    <button class="btn btn-primary" (click)="openCreateProductModal()">Add Product</button>
+  </div>
+
+  <!-- Ag-Grid for the Product  -->
+  <div class="container" style="height: 80vh;">
+    <ag-grid-angular
+      style="width: 100%; height: 80%;"
+      class="ag-theme-alpine"
+      [rowData]="products"
+      [columnDefs]="productColumnDefs"
+      [defaultColDef]="defaultColDef"
+      [pagination]="true"
+      [paginationPageSize]="paginationPageSize"
+      [paginationPageSizeSelector]="paginationPageSizeSelector"
+      (cellValueChanged)="onProductChanged($event)"
+    ></ag-grid-angular>
+  </div>
+
+  <!-- Modal for Product Creation -->
+  <ng-template #createProductModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Create New Product</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="createProductForm">
+        <div class="mb-3">
+          <label for="productName" class="form-label">Product Name</label>
+          <input type="text" id="productName" class="form-control" formControlName="name" placeholder="Enter product name"/>
+          <div class="text-danger" *ngIf="createProductForm.get('name')?.touched && createProductForm.get('name')?.invalid">
+            Product name is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productDescription" class="form-label">Description</label>
+          <input type="text" id="productDescription" class="form-control" formControlName="description" placeholder="Enter description"/>
+          <div class="text-danger" *ngIf="createProductForm.get('description')?.touched && createProductForm.get('description')?.invalid">
+            Description is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productPrice" class="form-label">Price</label>
+          <input type="number" id="productPrice" class="form-control" formControlName="price" placeholder="Enter price"/>
+          <div class="text-danger" *ngIf="createProductForm.get('price')?.touched && createProductForm.get('price')?.invalid">
+            Valid price is required (must be 0 or higher).
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productCategory" class="form-label">Category</label>
+          <input type="text" id="productCategory" class="form-control" formControlName="category" placeholder="Enter category"/>
+          <div class="text-danger" *ngIf="createProductForm.get('category')?.touched && createProductForm.get('category')?.invalid">
+            Category is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productBrand" class="form-label">Brand</label>
+          <input type="text" id="productBrand" class="form-control" formControlName="brand" placeholder="Enter brand"/>
+          <div class="text-danger" *ngIf="createProductForm.get('brand')?.touched && createProductForm.get('brand')?.invalid">
+            Brand is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="productImageUrl" class="form-label">Image URL</label>
+          <input type="text" id="productImageUrl" class="form-control" formControlName="imageUrl" placeholder="Enter image URL"/>
+          <div class="text-danger" *ngIf="createProductForm.get('imageUrl')?.touched && createProductForm.get('imageUrl')?.invalid">
+            Enter a valid image URL (e.g., http://example.com/image.jpg).
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="createProduct(modal)">Create Product</button>
+    </div>
+  </ng-template>
+
+  <!-- Modal for viewing stock of product -->
+  <ng-template #stockModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="stockModalLabel">
+        Editing Stocks for {{ selectedProduct?.name }}
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body d-flex justify-content-center align-items-center" style="height: 80vh;">
+      <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-primary" (click)="openCreateStockModal()">Add Stock</button>
+      </div>
+      <ag-grid-angular
+        style="width: 90%; height: 80%;"
+        class="ag-theme-alpine"
+        [rowData]="stocks"
+        [columnDefs]="stockColumnDefs"
+        [defaultColDef]="defaultColDef"
+        [pagination]="true"
+        [paginationPageSize]="paginationPageSize"
+        [paginationPageSizeSelector]="paginationPageSizeSelector"
+        (cellValueChanged)="onStockChanged($event)"
+      ></ag-grid-angular>
+    </div>
+  </ng-template>
+
+  <!-- Modal for Stock Creation -->
+  <ng-template #createStockModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Create New Stock</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="createStockForm">
+        <div class="mb-3">
+          <label for="stockSize" class="form-label">Size</label>
+          <input type="text" id="stockSize" class="form-control" formControlName="size" placeholder="Enter stock size"/>
+          <div class="text-danger" *ngIf="createProductForm.get('size')?.touched && createProductForm.get('size')?.invalid">
+            Stock size is required.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="stockQuantity" class="form-label">Quantity</label>
+          <input type="number" id="stockQuantity" class="form-control" formControlName="quantity" placeholder="Enter quantity"/>
+          <div class="text-danger" *ngIf="createProductForm.get('quantity')?.touched && createProductForm.get('quantity')?.invalid">
+            Valid quantity is required (must be 0 or higher).
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="createStock(modal)">Create Stock</button>
+    </div>
+  </ng-template>
+</div>

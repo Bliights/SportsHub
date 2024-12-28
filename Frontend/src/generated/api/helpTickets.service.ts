@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { HelpTicket } from '../model/helpTicket';
 import { HelpticketsIdBody } from '../model/helpticketsIdBody';
 import { UserIdHelpticketsBody } from '../model/userIdHelpticketsBody';
 
@@ -139,9 +140,9 @@ export class HelpTicketsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiHelpTicketsIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiHelpTicketsIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiHelpTicketsIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiHelpTicketsIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<HelpTicket>;
+    public apiHelpTicketsIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<HelpTicket>>;
+    public apiHelpTicketsIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<HelpTicket>>;
     public apiHelpTicketsIdGet(id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -152,6 +153,7 @@ export class HelpTicketsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -162,7 +164,7 @@ export class HelpTicketsService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<HelpTicket>('get',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -174,15 +176,15 @@ export class HelpTicketsService {
 
     /**
      * Update an existing help ticket
-     * Update details of a help ticket by its ID.
+     * Update details of a help ticket by its ID, such as its status.
      * @param body 
      * @param id Unique identifier of the help ticket.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<HelpTicket>;
+    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<HelpTicket>>;
+    public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<HelpTicket>>;
     public apiHelpTicketsIdPut(body: HelpticketsIdBody, id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -197,6 +199,7 @@ export class HelpTicketsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -212,7 +215,7 @@ export class HelpTicketsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<HelpTicket>('put',`${this.basePath}/api/help-tickets/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -243,6 +246,7 @@ export class HelpTicketsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -271,9 +275,9 @@ export class HelpTicketsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<HelpTicket>;
+    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<HelpTicket>>;
+    public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<HelpTicket>>;
     public apiUsersUserIdHelpTicketsPost(body: UserIdHelpticketsBody, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -288,6 +292,7 @@ export class HelpTicketsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -303,7 +308,7 @@ export class HelpTicketsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/help-tickets`,
+        return this.httpClient.request<HelpTicket>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/help-tickets`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

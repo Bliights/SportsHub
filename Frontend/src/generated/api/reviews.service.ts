@@ -18,6 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { ProductIdReviewsBody } from '../model/productIdReviewsBody';
+import { Review } from '../model/review';
 import { ReviewsIdBody } from '../model/reviewsIdBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -145,9 +146,9 @@ export class ReviewsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<Review>;
+    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Review>>;
+    public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Review>>;
     public apiReviewsIdPut(body: ReviewsIdBody, id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -162,6 +163,7 @@ export class ReviewsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -177,7 +179,7 @@ export class ReviewsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/api/reviews/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Review>('put',`${this.basePath}/api/reviews/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -197,9 +199,9 @@ export class ReviewsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'body', reportProgress?: boolean): Observable<Review>;
+    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Review>>;
+    public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Review>>;
     public apiUsersUserIdProductsProductIdReviewsPost(body: ProductIdReviewsBody, userId: any, productId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -218,6 +220,7 @@ export class ReviewsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -233,7 +236,7 @@ export class ReviewsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/products/${encodeURIComponent(String(productId))}/reviews`,
+        return this.httpClient.request<Review>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/products/${encodeURIComponent(String(productId))}/reviews`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -264,6 +267,7 @@ export class ReviewsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {

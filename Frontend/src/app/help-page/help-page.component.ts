@@ -1,104 +1,132 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
-import { HelpTicketsService, HelpTicketsResponsesService } from '../../generated';
-import {NgForOf, NgIf} from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {HelpTicket, Product, User} from '../../generated';
+import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
+import {HelpTicketsService} from '../api/help-tickets.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AllCommunityModule, ModuleRegistry} from 'ag-grid-community';
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-help-page',
   standalone: true,
   imports: [
     NavBarComponent,
+    ReactiveFormsModule,
     NgIf,
     NgForOf,
-    ReactiveFormsModule,
+    DatePipe
   ],
   templateUrl: './help-page.component.html',
-  styleUrl: './help-page.component.css'
+  styleUrl: './help-page.component.css',
+  providers: [DatePipe]
 })
 export class HelpPageComponent implements OnInit{
-  helpTickets: any[] = [];
-  isModalOpen = false;
+  helpTickets: HelpTicket[] = [];
+  paginatedHelpTickets: HelpTicket[] = [];
   createTicketForm: FormGroup;
+  @ViewChild('createTicketModal', { static: true }) createTicketModal!: TemplateRef<any>;
+
+  currentPage = 1;
+  itemsPerPage = 5;
+  totalPages = 0;
 
   constructor(private router: Router,
               private authService: AuthService,
-              private fb: FormBuilder,
+              private formBuilder: FormBuilder,
+              private modalService: NgbModal,
+              private datePipe: DatePipe,
               private helpTicketsService: HelpTicketsService) {
 
-    this.createTicketForm = this.fb.group({
+    this.createTicketForm = this.formBuilder.group({
       subject: ['', Validators.required],
       description: ['', Validators.required],
     });
   }
-  viewTicket(ticketId: number) {
-    if (!ticketId) return;
-    this.router.navigate(['/ticket/{id}', { id: ticketId }]);
-  }
 
   ngOnInit(): void {
     this.loadHelpTickets();
-  }
-
-  private sortTicketsByStatus(tickets: any[]): any[] {
-    const statusOrder = ['open', 'in_progress', 'resolved', 'closed'];
-
-    return tickets.sort((a, b) => {
-      const statusA = statusOrder.indexOf(a.status);
-      const statusB = statusOrder.indexOf(b.status);
-
-      return statusA - statusB;
+    this.createTicketForm = this.formBuilder.group({
+      subject: ['', [Validators.required]],
+      description: ['', [Validators.required]],
     });
   }
 
+  // Pagination methods
+  calculatePagination(): void {
+    this.totalPages = Math.ceil(this.helpTickets.length / this.itemsPerPage);
+    this.updatePaginatedProducts();
+  }
+
+  updatePaginatedProducts(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedHelpTickets = this.helpTickets.slice(startIndex, endIndex);
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePaginatedProducts();
+  }
+
+
+  //Load help tickets
   loadHelpTickets(): void {
-    this.helpTicketsService.apiUsersUserIdHelpTicketsGet(this.authService.idUser).subscribe({
-      next: (tickets) => { this.helpTickets = this.sortTicketsByStatus(tickets || []);
-      },
-      error: (err) => console.error('Error while loading the tickets :', err),
+    const userId = this.authService.userId;
+    this.helpTicketsService.getHelpTicketsByUserId(userId).subscribe((tickets) => {
+      this.helpTickets = tickets.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+      this.calculatePagination();
     });
+
   }
 
-  openModal(): void {
-    this.isModalOpen = true;
+  // View ticket
+  viewTicket(ticketId: number): void {
+    this.router.navigate([`/ticket/${ticketId}`]);
   }
 
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.createTicketForm.reset();
+  // Open the create ticket modal
+  openCreateTicketModal(): void {
+    this.modalService.open(this.createTicketModal, { size: 'lg', centered: true });
   }
 
-  createTicket(): void {
-    if (this.createTicketForm.invalid) return;
+  // Create a new ticket
+  createTicket(modal: any): void {
+    if (this.createTicketForm.invalid) {
+      this.createTicketForm.markAllAsTouched();
+      return;
+    }
 
     const { subject, description } = this.createTicketForm.value;
+    const userId = this.authService.userId;
 
-    this.helpTicketsService
-      .apiUsersUserIdHelpTicketsPost({ subject, description }, this.authService.idUser)
-      .subscribe({
-        next: (ticket) => {
-          console.log('Ticket créé :', ticket);
-          this.closeModal();
-          this.loadHelpTickets();
-        },
-        error: (err) => console.error('Erreur lors de la création du ticket :', err),
-      });
-  }
-
-  deleteTicket(ticketId: number): void {
-    if (!ticketId) return;
-
-    this.helpTicketsService.apiHelpTicketsIdDelete(ticketId).subscribe({
+    this.helpTicketsService.createHelpTicket(userId, subject, description).subscribe({
       next: () => {
-        console.log(`Ticket ${ticketId} supprimé.`);
+        console.log('Help ticket created successfully');
         this.loadHelpTickets();
       },
       error: (err) => {
-        console.error(`Erreur lors de la suppression du ticket ${ticketId} :`, err);
+        console.error('Failed to create help ticket:', err);
       },
     });
+
+    this.createTicketForm.reset({
+      subject: '',
+      description: '',
+    });
+    modal.dismiss();
   }
 
+  // Delete a ticket
+  deleteTicket(ticketId: number): void {
+    this.helpTicketsService.deleteHelpTicket(ticketId).subscribe(() => {
+      this.loadHelpTickets();
+    });
+  }
 }

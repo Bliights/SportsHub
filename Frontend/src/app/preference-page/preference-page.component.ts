@@ -1,27 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import {PreferencesService, UserIdPreferencesBody} from '../../generated';
-import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {PreferencesService} from '../api/preferences.service';
+import {Preference} from '../../generated';
+import {AuthService} from '../auth.service';
+import {NavBarComponent} from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-preference-page',
   standalone: true,
   imports: [
-    NavBarComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NavBarComponent
   ],
   templateUrl: './preference-page.component.html',
-  styleUrls: ['./preference-page.component.css']
+  styleUrl: './preference-page.component.css'
 })
 export class PreferencePageComponent implements OnInit {
   preferenceForm: FormGroup;
-  userId = localStorage.getItem('id');
+  preference: Preference = {};
 
-  constructor(
-    private preferencesService: PreferencesService,
-    private fb: FormBuilder
-  ) {
-    this.preferenceForm = this.fb.group({
+  constructor(private preferencesService: PreferencesService, private formBuilder: FormBuilder, private authService: AuthService) {
+    this.preferenceForm = this.formBuilder.group({
       receiveNotification: [false],
       theme: ['light'],
       newsLetter: [false]
@@ -29,38 +28,42 @@ export class PreferencePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.userId) {
-      this.loadPreferences();
-    } else {
-      console.error('No user ID provided!');
-    }
+    this.loadPreferences();
+    this.setupFormListeners();
   }
 
+  // Load the user's preferences
   loadPreferences(): void {
-    this.preferencesService.apiUsersUserIdPreferencesGet(this.userId).subscribe({
-      next: (preference) => {
-        this.preferenceForm.patchValue(preference);
-      },
-      error: (err) => {
-        console.error('Failed to load preferences', err);
-      }
+    const userId = this.authService.userId;
+    this.preferencesService.getPreferences(userId).subscribe((preference) => {
+      this.preference = preference;
+      this.preferenceForm.patchValue(preference);
     });
   }
 
-  savePreferences(): void {
-    let updatedPreference: UserIdPreferencesBody = {
-      receiveNotification: this.preferenceForm.value.receiveNotification,
-      theme: this.preferenceForm.value.theme,
-      newsLetter: this.preferenceForm.value.newsLetter
-    };
+  // Setup listeners for form changes
+  setupFormListeners(): void {
+    const userId = this.authService.userId;
 
-    this.preferencesService.apiUsersUserIdPreferencesPut(updatedPreference,this.userId).subscribe({
-      next: (preference) => {
-        console.log('Preferences updated successfully', preference);
-      },
-      error: (err) => {
-        console.error('Failed to update preferences', err);
-      }
+    this.preferenceForm.get('receiveNotification')?.valueChanges.subscribe((value: boolean) => {
+      this.preferencesService.updatePreferences(userId, value, undefined, undefined).subscribe({
+        next: () => console.log(`Updated receiveNotification to ${value}`),
+        error: (err) => console.error('Error updating receiveNotification:', err),
+      });
+    });
+
+    this.preferenceForm.get('theme')?.valueChanges.subscribe((value: string) => {
+      this.preferencesService.updatePreferences(userId, undefined, value, undefined).subscribe({
+        next: () => console.log(`Updated theme to ${value}`),
+        error: (err) => console.error('Error updating theme:', err),
+      });
+    });
+
+    this.preferenceForm.get('newsLetter')?.valueChanges.subscribe((value: boolean) => {
+      this.preferencesService.updatePreferences(userId, undefined, undefined, value).subscribe({
+        next: () => console.log(`Updated newsLetter to ${value}`),
+        error: (err) => console.error('Error updating newsLetter:', err),
+      });
     });
   }
 }

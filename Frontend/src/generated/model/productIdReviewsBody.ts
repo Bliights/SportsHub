@@ -11,6 +11,12 @@
  */
 
 export interface ProductIdReviewsBody { 
+    /**
+     * Rating given to the product. Must be between 1 and 5.
+     */
     rating: any;
+    /**
+     * Review comment for the product.
+     */
     comment?: any;
 }

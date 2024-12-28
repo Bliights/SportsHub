@@ -18,6 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { ApiProductsBody } from '../model/apiProductsBody';
+import { Product } from '../model/product';
 import { ProductsIdBody } from '../model/productsIdBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -94,8 +95,8 @@ export class ProductsService {
 
     /**
      * Delete a product
-     * Remove a specific product from the system.
-     * @param id Unique identifier of the product.
+     * Remove a specific product from the system by its ID.
+     * @param id Unique identifier of the product to be deleted.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -139,9 +140,9 @@ export class ProductsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiProductsIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiProductsIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiProductsIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiProductsIdGet(id: any, observe?: 'body', reportProgress?: boolean): Observable<Product>;
+    public apiProductsIdGet(id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Product>>;
+    public apiProductsIdGet(id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Product>>;
     public apiProductsIdGet(id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -152,6 +153,7 @@ export class ProductsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -162,7 +164,7 @@ export class ProductsService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/api/products/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Product>('get',`${this.basePath}/api/products/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -180,9 +182,9 @@ export class ProductsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'body', reportProgress?: boolean): Observable<Product>;
+    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Product>>;
+    public apiProductsIdPut(body: ProductsIdBody, id: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Product>>;
     public apiProductsIdPut(body: ProductsIdBody, id: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -197,6 +199,7 @@ export class ProductsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -212,7 +215,7 @@ export class ProductsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/api/products/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Product>('put',`${this.basePath}/api/products/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -225,14 +228,14 @@ export class ProductsService {
 
     /**
      * Add a new product
-     * Create a new product in the system.
+     * Create a new product in the system. Ensures no duplicate product exists with the same name and brand.
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiProductsPost(body: ApiProductsBody, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiProductsPost(body: ApiProductsBody, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiProductsPost(body: ApiProductsBody, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiProductsPost(body: ApiProductsBody, observe?: 'body', reportProgress?: boolean): Observable<Product>;
+    public apiProductsPost(body: ApiProductsBody, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Product>>;
+    public apiProductsPost(body: ApiProductsBody, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Product>>;
     public apiProductsPost(body: ApiProductsBody, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -243,6 +246,7 @@ export class ProductsService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -258,7 +262,7 @@ export class ProductsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/products`,
+        return this.httpClient.request<Product>('post',`${this.basePath}/api/products`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

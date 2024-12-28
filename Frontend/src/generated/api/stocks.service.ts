@@ -18,6 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { ProductIdStockBody } from '../model/productIdStockBody';
+import { Stock } from '../model/stock';
 import { StockSizeBody } from '../model/stockSizeBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -97,8 +98,8 @@ export class StocksService {
     }
 
     /**
-     * Get stock details for a specific product
-     * Retrieve stock details for a specific product by its ID.
+     * Retrieve stock details for a specific product
+     * Retrieve stock details for a specific product by its ID, including quantity and available sizes.
      * @param productId Unique identifier of the product.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -116,6 +117,7 @@ export class StocksService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -137,16 +139,16 @@ export class StocksService {
     }
 
     /**
-     * Add stock for a specific product
-     * Add stock details for a specific product and size.
+     * Add or update stock for a specific product
+     * Add stock for a specific product and size. If the size already exists, the quantity will be updated.
      * @param body 
      * @param productId Unique identifier of the product.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'body', reportProgress?: boolean): Observable<Stock>;
+    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Stock>>;
+    public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Stock>>;
     public apiProductsProductIdStockPost(body: ProductIdStockBody, productId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -161,6 +163,7 @@ export class StocksService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -176,7 +179,7 @@ export class StocksService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/products/${encodeURIComponent(String(productId))}/stock`,
+        return this.httpClient.request<Stock>('post',`${this.basePath}/api/products/${encodeURIComponent(String(productId))}/stock`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -289,8 +292,8 @@ export class StocksService {
     }
 
     /**
-     * Get all available sizes for a product
-     * Retrieve a list of all available sizes for a specific product by its ID.
+     * Get available sizes for a specific product
+     * Retrieve all available sizes for a product by its ID.
      * @param productId Unique identifier of the product.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

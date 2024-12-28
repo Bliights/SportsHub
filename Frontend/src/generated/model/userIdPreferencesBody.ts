@@ -11,7 +11,16 @@
  */
 
 export interface UserIdPreferencesBody { 
+    /**
+     * Whether the user wants to receive notifications.
+     */
     receiveNotification?: any;
+    /**
+     * The theme preference of the user.
+     */
     theme?: any;
+    /**
+     * Whether the user wants to subscribe to newsletters.
+     */
     newsLetter?: any;
 }

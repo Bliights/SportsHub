@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import User from "../models/user";
+import Preference from "../models/preference";
+import CartItem from "../models/cartItem";
 
 const userRouter = Router();
 
@@ -9,32 +11,19 @@ const userRouter = Router();
  *   get:
  *     tags:
  *       - Users
- *     summary: Get all users
- *     description: Retrieve a list of all users.
+ *     summary: Retrieve all users
+ *     description: Fetch a complete list of all users in the system, including their details.
  *     responses:
  *       200:
- *         description: List of users.
+ *         description: Successfully retrieved the list of users.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   name:
- *                     type: string
- *                     example: "John Doe"
- *                   email:
- *                     type: string
- *                     example: "john.doe@example.com"
- *                   role:
- *                     type: string
- *                     example: "customer"
+ *                 $ref: '#/components/schemas/User'
  *       500:
- *         description: Internal server error.
+ *         description: An error occurred while fetching the users.
  */
 userRouter.get("/", async (req: Request, res: Response) => {
     try {
@@ -67,30 +56,9 @@ userRouter.get("/", async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 1
- *                 name:
- *                   type: string
- *                   example: "John Doe"
- *                 email:
- *                   type: string
- *                   example: "john.doe@example.com"
- *                 role:
- *                   type: string
- *                   example: "customer"
+ *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "User not found."
  *       500:
  *         description: Internal server error.
  */
@@ -127,10 +95,10 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Jane Smith"
+ *                 example: "Ema Smith"
  *               email:
  *                 type: string
- *                 example: "jane.smith@example.com"
+ *                 example: "ema.smith@example.com"
  *               password:
  *                 type: string
  *                 example: "securepassword"
@@ -140,13 +108,23 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
  *     responses:
  *       201:
  *         description: User created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input data.
+ *       409:
+ *         description: User with the provided email already exists.
  *       500:
  *         description: Internal server error.
  */
 userRouter.post("/", async (req: Request, res: Response) => {
     const { name, email, password, role } = req.body;
     try {
-        if (!name || !email || !password || !role) {
+        // Validate input
+        if (!name || !email || !password || !role || typeof name !== 'string' || typeof email !== 'string'
+            || typeof password !== 'string'|| !["customer", "admin"].includes(role)) {
             res.status(400).json({
                 error: "Mandatory fields are missing or invalid."
             });
@@ -161,6 +139,10 @@ userRouter.post("/", async (req: Request, res: Response) => {
         }
 
         const newUser = await User.create({ name, email, password, role });
+
+        // Create default preferences for the user
+        await Preference.create({ userId: newUser.id, receiveNotification: true, theme: "light", newsLetter: true });
+
         res.status(201).json(newUser);
     } catch (error) {
         console.error("Error creating user:", error);
@@ -192,19 +174,25 @@ userRouter.post("/", async (req: Request, res: Response) => {
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Jane Smith"
+ *                 example: "Ema Smith"
  *               email:
  *                 type: string
- *                 example: "jane.smith@example.com"
+ *                 example: "ema.smith@example.com"
  *               password:
  *                 type: string
- *                 example: "newsecurepassword"
+ *                 example: "securepassword"
  *               role:
  *                 type: string
  *                 example: "admin"
  *     responses:
  *       200:
  *         description: User updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input data.
  *       404:
  *         description: User not found.
  *       500:
@@ -213,13 +201,33 @@ userRouter.post("/", async (req: Request, res: Response) => {
 userRouter.put("/:id", async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
     const { name, email, password, role } = req.body;
-
+    console.log("req.body", req.body);
     try {
+        // Validate input
+        if ((name !== undefined && typeof name !== 'string') ||
+            (email !== undefined && typeof email !== 'string') ||
+            (password !== undefined && typeof password !== 'string') ||
+            (role !== undefined && !["customer", "admin"].includes(role))
+        ) {
+            res.status(400).json({
+                error: "Mandatory fields are missing or invalid."
+            });
+            return;
+        }
+
+        // Check if the user exists
         const user = await User.findByPk(userId);
         if (!user) {
             res.status(404).json({ error: "User not found." });
             return;
         }
+
+        // Check if new password is different from old password
+        if (password && password === user.password) {
+            res.status(400).json({ error: "New password must be different from the old password." });
+            return;
+        }
+
         // Update only the fields that are provided in the request
         const fieldsToUpdate: Partial<{ name: string; email: string; password: string; role: string }> = {};
         if (name !== undefined) fieldsToUpdate.name = name;
@@ -267,6 +275,12 @@ userRouter.delete("/:id", async (req: Request, res: Response) => {
             res.status(404).json({ error: "User not found." });
             return;
         }
+
+        // Delete user preferences
+        const deletedPreferencesCount = await Preference.destroy({ where: { userId } });
+
+        // Delete cart of the user
+        const deletedCartItemsCount = await CartItem.destroy({ where: { userId } });
 
         await user.destroy();
         res.status(200).json({ message: "User deleted successfully." });

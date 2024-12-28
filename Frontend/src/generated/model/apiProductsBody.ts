@@ -11,10 +11,28 @@
  */
 
 export interface ApiProductsBody { 
+    /**
+     * Name of the product.
+     */
     name: any;
+    /**
+     * Description of the product.
+     */
     description: any;
+    /**
+     * Price of the product.
+     */
     price: any;
+    /**
+     * Category of the product.
+     */
     category: any;
+    /**
+     * Brand of the product.
+     */
     brand: any;
+    /**
+     * URL of the product's image.
+     */
     imageUrl: any;
 }

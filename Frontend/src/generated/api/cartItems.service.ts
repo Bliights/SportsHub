@@ -17,8 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { CartProductIdBody } from '../model/cartProductIdBody';
-import { InlineResponse201 } from '../model/inlineResponse201';
+import { CartCartItemIdBody } from '../model/cartCartItemIdBody';
+import { CartItem } from '../model/cartItem';
 import { UserIdCartBody } from '../model/userIdCartBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -56,6 +56,147 @@ export class CartItemsService {
         return false;
     }
 
+
+    /**
+     * Remove an item from a user&#x27;s cart
+     * Delete a specific item from a user&#x27;s cart using its unique cart item ID.
+     * @param userId Unique identifier of the user.
+     * @param cartItemId Unique identifier of the cart item to delete.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersUserIdCartCartItemIdDelete(userId: any, cartItemId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsersUserIdCartCartItemIdDelete(userId: any, cartItemId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsersUserIdCartCartItemIdDelete(userId: any, cartItemId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdCartCartItemIdDelete(userId: any, cartItemId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdCartCartItemIdDelete.');
+        }
+
+        if (cartItemId === null || cartItemId === undefined) {
+            throw new Error('Required parameter cartItemId was null or undefined when calling apiUsersUserIdCartCartItemIdDelete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('delete',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart/${encodeURIComponent(String(cartItemId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Update the quantity of a cart item
+     * Modify the quantity of a cart item using its unique cart item ID. If the quantity is set to 0, the item will be removed from the cart.
+     * @param body 
+     * @param userId Unique identifier of the user.
+     * @param cartItemId Unique identifier of the cart item.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersUserIdCartCartItemIdPut(body: CartCartItemIdBody, userId: any, cartItemId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsersUserIdCartCartItemIdPut(body: CartCartItemIdBody, userId: any, cartItemId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsersUserIdCartCartItemIdPut(body: CartCartItemIdBody, userId: any, cartItemId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdCartCartItemIdPut(body: CartCartItemIdBody, userId: any, cartItemId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling apiUsersUserIdCartCartItemIdPut.');
+        }
+
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdCartCartItemIdPut.');
+        }
+
+        if (cartItemId === null || cartItemId === undefined) {
+            throw new Error('Required parameter cartItemId was null or undefined when calling apiUsersUserIdCartCartItemIdPut.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart/${encodeURIComponent(String(cartItemId))}`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Clear all items from a user&#x27;s cart
+     * Remove all items from the cart for a specific user.
+     * @param userId Unique identifier of the user.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersUserIdCartDelete(userId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsersUserIdCartDelete(userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsersUserIdCartDelete(userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdCartDelete(userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdCartDelete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('delete',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * Get all items in a user&#x27;s cart
@@ -106,9 +247,9 @@ export class CartItemsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<InlineResponse201>;
-    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InlineResponse201>>;
-    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InlineResponse201>>;
+    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'body', reportProgress?: boolean): Observable<CartItem>;
+    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CartItem>>;
+    public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CartItem>>;
     public apiUsersUserIdCartPost(body: UserIdCartBody, userId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -139,108 +280,7 @@ export class CartItemsService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<InlineResponse201>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart`,
-            {
-                body: body,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Remove an item from a user&#x27;s cart
-     * Delete a specific product from a user&#x27;s cart using its product ID.
-     * @param userId Unique identifier of the user.
-     * @param productId Unique identifier of the product to delete from the cart.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiUsersUserIdCartProductIdDelete(userId: any, productId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdCartProductIdDelete(userId: any, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdCartProductIdDelete(userId: any, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsersUserIdCartProductIdDelete(userId: any, productId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdCartProductIdDelete.');
-        }
-
-        if (productId === null || productId === undefined) {
-            throw new Error('Required parameter productId was null or undefined when calling apiUsersUserIdCartProductIdDelete.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<any>('delete',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart/${encodeURIComponent(String(productId))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Update an item in a user&#x27;s cart
-     * Modify the details (e.g., quantity, size) of a product in the user&#x27;s cart using the product ID.
-     * @param body 
-     * @param userId Unique identifier of the user.
-     * @param productId Unique identifier of the product to update in the cart.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiUsersUserIdCartProductIdPut(body: CartProductIdBody, userId: any, productId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiUsersUserIdCartProductIdPut(body: CartProductIdBody, userId: any, productId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiUsersUserIdCartProductIdPut(body: CartProductIdBody, userId: any, productId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiUsersUserIdCartProductIdPut(body: CartProductIdBody, userId: any, productId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling apiUsersUserIdCartProductIdPut.');
-        }
-
-        if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdCartProductIdPut.');
-        }
-
-        if (productId === null || productId === undefined) {
-            throw new Error('Required parameter productId was null or undefined when calling apiUsersUserIdCartProductIdPut.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
-        return this.httpClient.request<any>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart/${encodeURIComponent(String(productId))}`,
+        return this.httpClient.request<CartItem>('post',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/cart`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

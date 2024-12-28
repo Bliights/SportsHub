@@ -1,57 +1,106 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ProductItemComponent } from '../product-item/product-item.component';
-import { ProductDTO, ProductsService } from '../products.service';
-import { AsyncPipe, NgForOf } from '@angular/common';
-import { combineLatest, map, Observable } from 'rxjs';
-import { SearchService } from '../search.service';
+import {Component, OnInit} from '@angular/core';
+import {ProductsService} from '../api/products.service';
+import {SearchService} from '../search.service';
+import {Product} from '../../generated';
+import {NgForOf, NgIf} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-product-area',
   standalone: true,
   imports: [
-    ProductItemComponent,
     NgForOf,
-    AsyncPipe
+    NgIf
   ],
   templateUrl: './product-area.component.html',
   styleUrl: './product-area.component.css'
 })
-export class ProductAreaComponent implements OnInit {
-  products$: Observable<ProductDTO[]>;
-  filteredProducts$: Observable<ProductDTO[]> = new Observable<ProductDTO[]>();
+export class ProductAreaComponent implements OnInit{
+  allProducts: Product[] = [];
+  products: Product[] = [];
+  paginatedProducts: Product[] = [];
   selectedCategory: string | null = null;
+
+  currentPage = 1;
+  itemsPerPage = 18;
+  totalPages = 0;
 
   constructor(
     private productsService: ProductsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private router: Router
   ) {
-    this.products$ = this.productsService.getProducts();
   }
 
   ngOnInit() {
-    this.filteredProducts$ = combineLatest([this.products$, this.searchService.searchQuery$]).pipe(
-      map(([products, searchQuery]) =>
-        products.filter(product =>
-          (this.selectedCategory === null || product.category === this.selectedCategory) &&
-          (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase()))
-        )
-      )
-    );
+    this.loadProducts();
+    this.filter();
   }
 
-  onClickEquipments() {
-    this.selectedCategory = 'Equipment';
-    this.ngOnInit();
+  // Load all products
+  loadProducts(): void {
+    this.productsService.getAllProducts().subscribe((allProducts: Product[]) => {
+      this.allProducts = allProducts;
+      this.applyFilters('');
+    });
   }
 
-  onClickClothes() {
-    this.selectedCategory = 'Clothe';
-    this.ngOnInit();
+  // Filter products based on search query and apply filter when search query changes
+  filter(): void {
+    this.searchService.searchQueryChanged$.subscribe((searchQuery) => {
+      this.applyFilters(searchQuery);
+    });
   }
 
-  onClickAll() {
-    this.selectedCategory = null;
-    this.ngOnInit();
+  // apply filters to products
+  applyFilters(searchQuery: string): void {
+    let filteredProducts = this.allProducts;
+
+    // Filter by category
+    if (this.selectedCategory) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.category === this.selectedCategory
+      );
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    this.products = filteredProducts;
+    this.calculatePagination();
+  }
+
+  //Pagination methods
+  calculatePagination(): void {
+    this.totalPages = Math.ceil(this.products.length / this.itemsPerPage);
+    this.updatePaginatedProducts();
+  }
+
+  updatePaginatedProducts(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedProducts = this.products.slice(startIndex, endIndex);
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePaginatedProducts();
+  }
+
+  // Method to filter products by category
+  filterByCategory(category: string | null): void {
+    this.selectedCategory = category;
+    this.currentPage = 1;
+    this.applyFilters(this.searchService.searchQuery);
+  }
+
+  // View product details
+  viewProductDetails(productId: number): void {
+    this.router.navigate([`/product/${productId}`]);
   }
 }

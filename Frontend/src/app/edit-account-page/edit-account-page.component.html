@@ -1,0 +1,80 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container mt-5">
+  <h2 class="text-center text-primary mb-4">Update Account</h2>
+
+  <!-- Logout Button -->
+  <div class="d-flex justify-content-center mb-4">
+    <button (click)="onClickLogout()" class="btn btn-danger btn-lg rounded-pill w-75">Logout</button>
+  </div>
+
+  <!-- Card for Change Password -->
+  <div class="card shadow mb-4">
+    <div class="card-header text-white bg-primary">
+      <h5 class="mb-0">Change Password</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="changePassword">
+        <div class="mb-3">
+          <label for="old-password" class="form-label">Old Password</label>
+          <input type="password" class="form-control" id="old-password" formControlName="oldPassword">
+        </div>
+        <div class="mb-3">
+          <label for="newPassword" class="form-label">New Password</label>
+          <input type="password" class="form-control" id="newPassword" formControlName="newPassword">
+        </div>
+        <button (click)="onSubmitPassword()" class="btn btn-primary w-100" [disabled]="!changePassword.valid">Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card for Change Email -->
+  <div class="card shadow mb-4">
+    <div class="card-header text-white bg-primary">
+      <h5 class="mb-0">Change Email</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="changeEmail">
+        <div class="mb-3">
+          <label>Current Email</label>
+          <div *ngIf="user">
+            <p id="actualEmail" class="form-text">{{ user.email }}</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">New Email</label>
+          <input type="text" class="form-control" id="email" formControlName="email">
+          <small *ngIf="changeEmail.get('email')?.invalid && (changeEmail.get('email')?.dirty || changeEmail.get('email')?.touched)" class="text-danger">
+            Please enter a valid email address.
+          </small>
+        </div>
+        <button (click)="onSubmitEmail()" class="btn btn-primary w-100" [disabled]="!changeEmail.valid">Update Email</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card for Change Name -->
+  <div class="card shadow mb-4">
+    <div class="card-header text-white bg-primary">
+      <h5 class="mb-0">Change Name</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="changeName">
+        <div class="mb-3">
+          <label>Current Name</label>
+          <div *ngIf="user">
+            <p id="actualName" class="form-text">{{ user.name }}</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">New Name</label>
+          <input type="text" class="form-control" id="username" formControlName="username">
+          <small *ngIf="changeName.get('username')?.invalid && changeName.get('username')?.touched" class="text-danger">
+            Please enter at least 1 character.
+          </small>
+        </div>
+        <button (click)="onSubmitName()" class="btn btn-primary w-100" [disabled]="!changeName.valid">Update Name</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,9 @@
-<div class="search-bar-container">
-  <input type="text" class="search-input" placeholder="Search" [(ngModel)]="searchQuery" (input)="onSearch()">
+<div class="d-flex justify-content-center transparent-margin" style="padding: 40px;">
+  <div class="input-group" style="width: 50%;">
+    <span class="input-group-text" id="search-icon">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="text" class="form-control" placeholder="Search for products..." aria-label="Search" aria-describedby="search-icon" [(ngModel)]="searchQuery"/>
+    <button class="btn btn-primary" type="button" (click)="onSearch()">Search</button>
+  </div>
 </div>

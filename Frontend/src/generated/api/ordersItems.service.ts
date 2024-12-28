@@ -17,8 +17,6 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { OrderIdItemsBody } from '../model/orderIdItemsBody';
-import { ProductIdSizeBody } from '../model/productIdSizeBody';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -58,8 +56,8 @@ export class OrdersItemsService {
 
     /**
      * Get all items in a specific order
-     * Retrieve all items in a specific order by order ID.
-     * @param orderId Unique identifier of the order.
+     * Retrieve all items associated with a specific order using its unique identifier.
+     * @param orderId The unique identifier of the order.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -89,168 +87,6 @@ export class OrdersItemsService {
 
         return this.httpClient.request<any>('get',`${this.basePath}/api/orders/${encodeURIComponent(String(orderId))}/items`,
             {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Add an item to an order
-     * Add a new item to an order.
-     * @param body 
-     * @param orderId Unique identifier of the order.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiOrdersOrderIdItemsPost(body: OrderIdItemsBody, orderId: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiOrdersOrderIdItemsPost(body: OrderIdItemsBody, orderId: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiOrdersOrderIdItemsPost(body: OrderIdItemsBody, orderId: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiOrdersOrderIdItemsPost(body: OrderIdItemsBody, orderId: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling apiOrdersOrderIdItemsPost.');
-        }
-
-        if (orderId === null || orderId === undefined) {
-            throw new Error('Required parameter orderId was null or undefined when calling apiOrdersOrderIdItemsPost.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
-        return this.httpClient.request<any>('post',`${this.basePath}/api/orders/${encodeURIComponent(String(orderId))}/items`,
-            {
-                body: body,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Remove an item from an order
-     * Delete a specific item from an order by product ID and size.
-     * @param orderId Unique identifier of the order.
-     * @param productId Unique identifier of the product in the order.
-     * @param size Size of the product in the order.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiOrdersOrderIdProductsProductIdSizeDelete(orderId: any, productId: any, size: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiOrdersOrderIdProductsProductIdSizeDelete(orderId: any, productId: any, size: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiOrdersOrderIdProductsProductIdSizeDelete(orderId: any, productId: any, size: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiOrdersOrderIdProductsProductIdSizeDelete(orderId: any, productId: any, size: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (orderId === null || orderId === undefined) {
-            throw new Error('Required parameter orderId was null or undefined when calling apiOrdersOrderIdProductsProductIdSizeDelete.');
-        }
-
-        if (productId === null || productId === undefined) {
-            throw new Error('Required parameter productId was null or undefined when calling apiOrdersOrderIdProductsProductIdSizeDelete.');
-        }
-
-        if (size === null || size === undefined) {
-            throw new Error('Required parameter size was null or undefined when calling apiOrdersOrderIdProductsProductIdSizeDelete.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<any>('delete',`${this.basePath}/api/orders/${encodeURIComponent(String(orderId))}/products/${encodeURIComponent(String(productId))}/${encodeURIComponent(String(size))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Update an item in an order
-     * Update the details of an existing item in an order by product ID and size.
-     * @param body 
-     * @param orderId Unique identifier of the order.
-     * @param productId Unique identifier of the product in the order.
-     * @param size Size of the product in the order.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiOrdersOrderIdProductsProductIdSizePut(body: ProductIdSizeBody, orderId: any, productId: any, size: any, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiOrdersOrderIdProductsProductIdSizePut(body: ProductIdSizeBody, orderId: any, productId: any, size: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiOrdersOrderIdProductsProductIdSizePut(body: ProductIdSizeBody, orderId: any, productId: any, size: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiOrdersOrderIdProductsProductIdSizePut(body: ProductIdSizeBody, orderId: any, productId: any, size: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling apiOrdersOrderIdProductsProductIdSizePut.');
-        }
-
-        if (orderId === null || orderId === undefined) {
-            throw new Error('Required parameter orderId was null or undefined when calling apiOrdersOrderIdProductsProductIdSizePut.');
-        }
-
-        if (productId === null || productId === undefined) {
-            throw new Error('Required parameter productId was null or undefined when calling apiOrdersOrderIdProductsProductIdSizePut.');
-        }
-
-        if (size === null || size === undefined) {
-            throw new Error('Required parameter size was null or undefined when calling apiOrdersOrderIdProductsProductIdSizePut.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
-        return this.httpClient.request<any>('put',`${this.basePath}/api/orders/${encodeURIComponent(String(orderId))}/products/${encodeURIComponent(String(productId))}/${encodeURIComponent(String(size))}`,
-            {
-                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

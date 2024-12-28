@@ -11,5 +11,8 @@
  */
 
 export interface OrdersIdBody { 
-    status?: any;
+    /**
+     * The new status for the order.
+     */
+    status: any;
 }

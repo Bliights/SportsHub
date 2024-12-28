@@ -7,8 +7,9 @@ class HelpTicket extends Model {
     public userId!: number;
     public subject!: string;
     public description!: string;
-    public status!: "open" | "in_progress" | "resolved" | "closed";
-    public createdAt!: Date;
+    public status!: "open" | "in_progress" | "closed";
+    public createdAt!: Date
+    public updatedAt!: Date | null;
     public closedAt!: Date | null;
 }
 
@@ -18,8 +19,9 @@ HelpTicket.init(
         userId: {type: DataTypes.INTEGER, allowNull: false,},
         subject: {type: DataTypes.STRING, allowNull: false,},
         description: {type: DataTypes.STRING, allowNull: false,},
-        status: {type: DataTypes.ENUM("open", "in_progress", "resolved", "closed"), allowNull: false, defaultValue: "open",},
+        status: {type: DataTypes.ENUM("open", "in_progress", "closed"), allowNull: false, defaultValue: "open",},
         createdAt: {type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW,},
+        updatedAt: {type: DataTypes.DATE, allowNull: true,},
         closedAt: {type: DataTypes.DATE, allowNull: true,},
     },
     {

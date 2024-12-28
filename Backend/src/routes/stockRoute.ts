@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import Stock from "../models/stock";
+import Product from "../models/product";
 
 const stockRouter = Router();
 
@@ -9,8 +10,8 @@ const stockRouter = Router();
  *   get:
  *     tags:
  *       - Stocks
- *     summary: Get stock details for a specific product
- *     description: Retrieve stock details for a specific product by its ID.
+ *     summary: Retrieve stock details for a specific product
+ *     description: Retrieve stock details for a specific product by its ID, including quantity and available sizes.
  *     parameters:
  *       - in: path
  *         name: productId
@@ -21,6 +22,12 @@ const stockRouter = Router();
  *     responses:
  *       200:
  *         description: Successfully retrieved stock details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Stock'
  *       404:
  *         description: Stock not found for this product.
  *       500:
@@ -48,8 +55,8 @@ stockRouter.get("/:productId/stock", async (req: Request, res: Response) => {
  *   get:
  *     tags:
  *       - Stocks
- *     summary: Get all available sizes for a product
- *     description: Retrieve a list of all available sizes for a specific product by its ID.
+ *     summary: Get available sizes for a specific product
+ *     description: Retrieve all available sizes for a product by its ID.
  *     parameters:
  *       - in: path
  *         name: productId
@@ -102,8 +109,8 @@ stockRouter.get("/:productId/stock/sizes", async (req: Request, res: Response) =
  *   post:
  *     tags:
  *       - Stocks
- *     summary: Add stock for a specific product
- *     description: Add stock details for a specific product and size.
+ *     summary: Add or update stock for a specific product
+ *     description: Add stock for a specific product and size. If the size already exists, the quantity will be updated.
  *     parameters:
  *       - in: path
  *         name: productId
@@ -129,7 +136,11 @@ stockRouter.get("/:productId/stock/sizes", async (req: Request, res: Response) =
  *                 example: "M"
  *     responses:
  *       201:
- *         description: Stock added successfully.
+ *         description: Stock added or updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Stock'
  *       400:
  *         description: Invalid input data.
  *       500:
@@ -140,13 +151,29 @@ stockRouter.post("/:productId/stock", async (req: Request, res: Response) => {
     const { quantity, size } = req.body;
 
     try {
-        if (!quantity || !size) {
-            res.status(400).json({ error: "Quantity and size are required." });
+        if (quantity === undefined || !size || typeof quantity !== 'number' || typeof size !== 'string' ||quantity < 0) {
+            res.status(400).json({ error: "Mandatory fields are missing or invalid." });
             return;
         }
 
-        const newStock = await Stock.create({ productId, quantity, size });
-        res.status(201).json(newStock);
+        // Check if the product exists
+        const productExists = await Product.findByPk(productId);
+        if (!productExists) {
+            res.status(404).json({ error: "Product not found." });
+            return;
+        }
+
+        // Check if there is already a stock for the size
+        const existingStock = await Stock.findOne({ where: { productId, size } });
+        if (existingStock) {
+            existingStock.quantity += quantity;
+            await existingStock.save();
+
+            res.status(201).json(existingStock);
+        } else {
+            const newStock = await Stock.create({ productId, quantity, size });
+            res.status(201).json(newStock);
+        }
     } catch (error) {
         console.error("Error adding stock:", error);
         res.status(500).json({ error: "Internal server error." });

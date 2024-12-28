@@ -7,35 +7,41 @@
 </h2>
 
 <div class="text-center mt-4">
-  <button class="btn btn-primary" (click)="openModal()">Create New Ticket</button>
+  <button class="btn btn-primary" (click)="openCreateTicketModal()">Create New Ticket</button>
 </div>
 
-<div class="modal-overlay" *ngIf="isModalOpen">
-  <div class="modal-window">
-    <h3 class="text-center">Create Help Ticket</h3>
+<!-- Modal for the ticket creation -->
+<ng-template #createTicketModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Create Help Ticket</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
     <form [formGroup]="createTicketForm">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input id="title" formControlName="subject" class="form-control" type="text" placeholder="Enter ticket title">
-        <small *ngIf="createTicketForm.get('subject')?.invalid && createTicketForm.get('subject')?.touched" class="text-danger">
-          Title is required and must not exceed 100 characters.
-        </small>
+      <div class="mb-3">
+        <label for="ticketSubject" class="form-label">Subject</label>
+        <input type="text" id="ticketSubject" class="form-control" formControlName="subject" placeholder="Enter ticket subject" />
+        <div class="text-danger" *ngIf="createTicketForm.get('subject')?.touched && createTicketForm.get('subject')?.invalid">
+          Subject is required.
+        </div>
       </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" formControlName="description" class="form-control" rows="3" placeholder="Enter ticket description"></textarea>
-        <small *ngIf="createTicketForm.get('description')?.invalid && createTicketForm.get('description')?.touched" class="text-danger">
-          Description is required and must not exceed 500 characters.
-        </small>
-      </div>
-      <div class="text-center mt-3">
-        <button class="btn btn-success" (click)="createTicket()" [disabled]="createTicketForm.invalid">Submit</button>
-        <button class="btn btn-danger" (click)="closeModal()">Cancel</button>
+      <div class="mb-3">
+        <label for="ticketDescription" class="form-label">Description</label>
+        <textarea id="ticketDescription" class="form-control" formControlName="description" rows="4" placeholder="Enter ticket description"></textarea>
+        <div class="text-danger" *ngIf="createTicketForm.get('description')?.touched && createTicketForm.get('description')?.invalid">
+          Description is required.
+        </div>
       </div>
     </form>
   </div>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="createTicket(modal)" [disabled]="createTicketForm.invalid">Create Ticket</button>
+  </div>
+</ng-template>
 
+
+<!-- Table for the user help ticket -->
 <h3 class="text-center text-secondary mt-5">Existing Help Tickets</h3>
 <div class="container mt-3">
   <table class="table table-bordered">
@@ -44,14 +50,16 @@
       <th>Title</th>
       <th>Description</th>
       <th>Status</th>
+      <th>Date of creation</th>
       <th>Action</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let ticket of helpTickets">
+    <tr *ngFor="let ticket of paginatedHelpTickets">
       <td>{{ ticket.subject }}</td>
       <td>{{ ticket.description }}</td>
       <td>{{ ticket.status }}</td>
+      <td>{{ ticket.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
       <td>
         <button class="btn btn-info btn-sm" (click)="viewTicket(ticket.id)">View</button>
         <button class="btn btn-danger btn-sm" (click)="deleteTicket(ticket.id)">Delete</button>
@@ -59,6 +67,26 @@
     </tr>
     </tbody>
   </table>
+
+  <!-- Bootstrap pagination -->
+  <nav *ngIf="totalPages > 1" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+      </li>
+      <li
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        class="page-item"
+        [class.active]="i + 1 === currentPage"
+      >
+        <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+      </li>
+    </ul>
+  </nav>
+
 </div>
 
 

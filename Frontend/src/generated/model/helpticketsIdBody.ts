@@ -11,5 +11,8 @@
  */
 
 export interface HelpticketsIdBody { 
-    status?: any;
+    /**
+     * The updated status of the help ticket.
+     */
+    status: any;
 }

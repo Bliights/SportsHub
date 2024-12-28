@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import Review from "../models/review";
+import Product from "../models/product";
+import User from "../models/user";
 
 const reviewRouter = Router();
 
@@ -26,24 +28,7 @@ const reviewRouter = Router();
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   userId:
- *                     type: integer
- *                     example: 5
- *                   rating:
- *                     type: integer
- *                     example: 4
- *                   comment:
- *                     type: string
- *                     example: "Great product!"
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                     example: "2023-06-15T14:48:00.000Z"
+ *                 $ref: '#/components/schemas/Review'
  *       404:
  *         description: No reviews found for this product.
  *       500:
@@ -84,6 +69,12 @@ reviewRouter.get("/products/:productId/reviews", async (req: Request, res: Respo
  *     responses:
  *       200:
  *         description: Successfully retrieved user reviews.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
  *       404:
  *         description: User has not submitted any reviews.
  *       500:
@@ -138,15 +129,23 @@ reviewRouter.get("/users/:userId/reviews", async (req: Request, res: Response) =
  *             properties:
  *               rating:
  *                 type: integer
+ *                 description: Rating given to the product. Must be between 1 and 5.
  *                 example: 4
  *               comment:
  *                 type: string
+ *                 description: Review comment for the product.
  *                 example: "Amazing product, would buy again!"
  *     responses:
  *       201:
  *         description: Review created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
  *       400:
- *         description: Invalid input data.
+ *         description: Invalid input data or duplicate review.
+ *       404:
+ *         description: Product or user not found.
  *       500:
  *         description: Internal server error.
  */
@@ -156,8 +155,30 @@ reviewRouter.post("/users/:userId/products/:productId/reviews", async (req: Requ
     const { rating, comment } = req.body;
 
     try {
-        if (!rating) {
-            res.status(400).json({ error: "Rating is required." });
+        // Validate input types
+        if (!rating || !comment || typeof rating !== 'number' || rating < 1 || rating > 5 || typeof comment !== 'string' ) {
+            res.status(400).json({ error: "Mandatory fields are missing or invalid." });
+            return;
+        }
+
+        // Check if the product exists
+        const existingProduct = await Product.findByPk(productId);
+        if (!existingProduct) {
+            res.status(404).json({ error: "Product not found." });
+            return;
+        }
+
+        // Check if the user exists
+        const userExists = await User.findByPk(userId);
+        if (!userExists) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
+        // Check if the user has already reviewed the product
+        const existingReview = await Review.findOne({ where: { userId, productId } });
+        if (existingReview) {
+            res.status(400).json({ error: "User has already reviewed this product." });
             return;
         }
 
@@ -193,13 +214,21 @@ reviewRouter.post("/users/:userId/products/:productId/reviews", async (req: Requ
  *             properties:
  *               rating:
  *                 type: integer
+ *                 description: Rating of the review. Must be between 1 and 5.
  *                 example: 5
  *               comment:
  *                 type: string
+ *                 description: Updated comment for the review.
  *                 example: "Updated comment"
  *     responses:
  *       200:
  *         description: Review updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Invalid input data.
  *       404:
  *         description: Review not found.
  *       500:
@@ -210,13 +239,27 @@ reviewRouter.put("/reviews/:id", async (req: Request, res: Response) => {
     const { rating, comment } = req.body;
 
     try {
+        // Validate input types
+        if (
+            (rating !== undefined && (typeof rating !== "number" || rating < 1 || rating > 5 )) || (comment !== undefined && typeof comment !== "string")
+        ) {
+            res.status(400).json({ error: "Mandatory fields are missing or invalid." });
+            return;
+        }
+
         const review = await Review.findByPk(id);
         if (!review) {
             res.status(404).json({ error: "Review not found." });
             return;
         }
 
-        await review.update({ rating, comment });
+        // Update only the provided fields
+        const fieldsToUpdate: Partial<{ rating: number; comment: string }> = {};
+
+        if (rating !== undefined) fieldsToUpdate.rating = rating;
+        if (comment !== undefined) fieldsToUpdate.comment = comment;
+
+        await review.update(fieldsToUpdate);
         res.status(200).json(review);
     } catch (error) {
         console.error("Error updating review:", error);

@@ -9,7 +9,6 @@ class OrderItem extends Model {
     public quantity!: number;
     public size!: string;
     public price!: number;
-    public createdAt!: Date;
 }
 
 OrderItem.init(
@@ -20,7 +19,6 @@ OrderItem.init(
         quantity: {type: DataTypes.INTEGER, allowNull: false,},
         size: {type: DataTypes.STRING, allowNull: false,},
         price: {type: DataTypes.FLOAT, allowNull: false,},
-        createdAt: {type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW,},
     },
     {
         sequelize,

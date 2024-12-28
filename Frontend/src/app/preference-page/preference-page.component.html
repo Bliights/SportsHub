@@ -1,24 +1,42 @@
 <app-nav-bar></app-nav-bar>
 <div class="container mt-4">
-  <h1>User Preferences</h1>
-  <form [formGroup]="preferenceForm" (ngSubmit)="savePreferences()">
-    <div class="form-group mb-3">
-      <label for="receiveNotification" class="form-label">Receive Notifications</label>
-      <input type="checkbox" id="receiveNotification" formControlName="receiveNotification" class="form-check-input">
+  <h1 class="text-center text-primary">User Preferences</h1>
+  <div class="card mt-4 shadow">
+    <div class="card-body">
+      <form [formGroup]="preferenceForm">
+        <!-- Notifications -->
+        <div class="form-check mb-3">
+          <label for="receiveNotification" class="form-check-label">Receive Notifications</label>
+          <input
+            type="checkbox"
+            id="receiveNotification"
+            formControlName="receiveNotification"
+            class="form-check-input"
+          />
+        </div>
+
+        <!-- Theme -->
+        <div class="mb-3 row align-items-center">
+          <label for="theme" class="col-sm-3 col-form-label">Theme</label>
+          <div class="col-sm-9">
+            <select id="theme" formControlName="theme" class="form-select">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="form-check mb-3">
+          <label for="newsLetter" class="form-check-label">Subscribe to Newsletter</label>
+          <input
+            type="checkbox"
+            id="newsLetter"
+            formControlName="newsLetter"
+            class="form-check-input"
+          />
+        </div>
+      </form>
     </div>
-    <div class="form-group mb-3 row align-items-center">
-      <label for="theme" class="form-label col-sm-2">Theme</label>
-      <div class="col-sm-4">
-        <select id="theme" formControlName="theme" class="form-select">
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group mb-3">
-      <label for="newsLetter" class="form-label">Subscribe to Newsletter</label>
-      <input type="checkbox" id="newsLetter" formControlName="newsLetter" class="form-check-input">
-    </div>
-    <button type="submit" class="btn btn-primary">Save Preferences</button>
-  </form>
+  </div>
 </div>

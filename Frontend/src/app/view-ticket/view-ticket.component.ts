@@ -1,10 +1,13 @@
-import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
-import {Router, ActivatedRoute} from '@angular/router';
-import {AuthService} from '../auth.service';
-import {HelpTicketsService, HelpTicketsResponsesService} from '../../generated';
 import {DatePipe, NgClass, NgForOf} from '@angular/common';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthService} from '../auth.service';
+import {HelpTicketsService} from '../api/help-tickets.service';
+import {HelpTicketsResponsesService} from '../api/help-tickets-responses.service';
+import {HelpTicketResponse} from '../../generated';
+
 
 @Component({
   selector: 'app-view-ticket',
@@ -19,53 +22,49 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
   templateUrl: './view-ticket.component.html',
   styleUrl: './view-ticket.component.css'
 })
-export class ViewTicketComponent implements AfterViewChecked, OnInit {
-  ticketId: number = -1;
-  responses: any[] = [];
-  public idUser: number = -1;
-  @ViewChild('messageBox') private messageBox!: ElementRef;
+export class ViewTicketComponent implements AfterViewChecked, OnInit{
   responseForm: FormGroup;
+  responses: HelpTicketResponse[] = [];
+  ticketId: number = -1;
+  @ViewChild('messageBox') private messageBox!: ElementRef;
+  public userId: number = -1;
 
-  constructor(private fb: FormBuilder,
-              private router: Router,
+  constructor(private router: Router,
               private route: ActivatedRoute,
               private authService: AuthService,
+              private formBuilder: FormBuilder,
               private helpTicketsService: HelpTicketsService,
               private helpTicketsResponsesService: HelpTicketsResponsesService) {
 
-    const id = localStorage.getItem('id')
-    this.idUser = id ? parseInt(id, 10) : -1;
-    this.responseForm = this.fb.group({
+    this.responseForm = this.formBuilder.group({
       response: ['', [Validators.required]],
     });
   }
 
+  // Go back to the help center
   helpCenter() {
     this.router.navigate(['/help']);
   }
 
   ngOnInit(): void {
+    this.loadResponses();
+  }
+
+  // load the responses for the help ticket
+  loadResponses(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.ticketId = id ? parseInt(id, 10) : -1;
-
-    if (this.ticketId !== -1) {
-      this.loadResponses();
-    } else {
-      console.error('Invalid ticket ID');
-    }
-  }
-  loadResponses(): void {
-    this.helpTicketsResponsesService
-      .apiHelpTicketsTicketIdResponsesGet(this.ticketId)
-      .subscribe({
-        next: (data) => {
-          this.responses = data || [];
-          console.log('Responses loaded:', this.responses);
-        },
-        error: (err) => console.error('Error loading responses:', err),
-      });
+    this.userId = this.authService.userId;
+    this.helpTicketsResponsesService.getHelpTicketResponses(this.ticketId).subscribe((response) => {
+      this.responses = response;
+    });
   }
 
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  // scroll to the bottom of the chat box
   scrollToBottom(): void {
     try {
       this.messageBox.nativeElement.scrollTop = this.messageBox.nativeElement.scrollHeight;
@@ -74,31 +73,14 @@ export class ViewTicketComponent implements AfterViewChecked, OnInit {
     }
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-
+  // send the response to the help ticket
   sendResponse(): void {
-    if (this.responseForm.invalid) return;
-
-    const { response } = this.responseForm.value;
-
-    this.helpTicketsResponsesService
-      .apiHelpTicketsTicketIdResponsesUserIdPost(
-        { response },
-        this.ticketId,
-        this.idUser
-      )
-      .subscribe({
-        next: () => {
-          console.log('Response sent successfully');
-          this.loadResponses();
-          this.responseForm.reset();
-        },
-        error: (err) => {
-          console.error('Error sending response:', err);
-        },
+    if (this.responseForm.valid) {
+      const {response} = this.responseForm.value;
+      this.helpTicketsResponsesService.addResponseToHelpTicket(this.ticketId, this.userId, response).subscribe(() => {
+        this.loadResponses();
+        this.responseForm.reset();
       });
+    }
   }
-
 }
