@@ -78,7 +78,7 @@ export class AdminOrdersPageComponent implements OnInit{
     {
       headerName: 'Price',
       valueGetter: (params: any) => {
-        return params.data.quantity * params.data.price;
+        return parseFloat((params.data.quantity * params.data.price).toFixed(2));
       },
     },
   ]

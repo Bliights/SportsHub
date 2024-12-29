@@ -6,15 +6,17 @@ import { User } from '../../generated';
 import {UsersService} from '../api/users.service';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
 import {NgIf} from '@angular/common';
+import {NgbToast} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-edit-account-page',
   standalone: true,
-  imports: [
-    NavBarComponent,
-    ReactiveFormsModule,
-    NgIf
-  ],
+    imports: [
+        NavBarComponent,
+        ReactiveFormsModule,
+        NgIf,
+        NgbToast
+    ],
   templateUrl: './edit-account-page.component.html',
   styleUrl: './edit-account-page.component.css'
 })
@@ -23,6 +25,9 @@ export class EditAccountPageComponent implements OnInit{
   changeEmail: FormGroup;
   changeName: FormGroup;
   user: User| undefined;
+  toastMessage: string = '';
+  toastHeader: string = '';
+  show: boolean = false;
 
   constructor(formBuilder: FormBuilder,
               private authService: AuthService,
@@ -63,7 +68,7 @@ export class EditAccountPageComponent implements OnInit{
       this.usersService.getUserById(userId).subscribe({
         next: (user) => {
           if (user.password !== oldPassword) {
-            alert('The old password is incorrect. Please try again.');
+            this.showToast('The old password is incorrect. Please try again.', '');
             this.changePassword.reset();
             return;
           }
@@ -72,20 +77,20 @@ export class EditAccountPageComponent implements OnInit{
           this.usersService.updateUser(userId, undefined, undefined, newPassword).subscribe({
             next: () => {
               console.log('Password updated successfully');
-              alert('Password updated successfully');
+              this.showToast('Password updated successfully', '');
               this.changePassword.reset();
               this.loadUserInfo();
             },
             error: () => {
               console.error('Failed to update password');
-              alert('Failed to update password. Please try again.');
+              this.showToast('Failed to update password. Please try again.', '');
               this.changePassword.reset();
             }
           });
         },
         error: () => {
           console.error('Failed to validate old password');
-          alert('Failed to validate old password. Please try again.');
+          this.showToast('Failed to validate old password. Please try again.', '');
           this.changePassword.reset();
         }
       });
@@ -101,13 +106,13 @@ export class EditAccountPageComponent implements OnInit{
       this.usersService.updateUser(userId, undefined, email).subscribe({
         next: () => {
           console.log('Email updated successfully');
-          alert('Email updated successfully');
+          this.showToast('Email updated successfully', '');
           this.changeEmail.reset();
           this.loadUserInfo();
         },
         error: () => {
           console.error('Failed to update email');
-          alert('Failed to update email. Please try again.');
+          this.showToast('Failed to update email. Please try again.', '');
           this.changeEmail.reset();
         }
       });
@@ -123,13 +128,13 @@ export class EditAccountPageComponent implements OnInit{
       this.usersService.updateUser(userId, username).subscribe({
         next: () => {
           console.log('Name updated successfully');
-          alert('Name updated successfully');
+          this.showToast('Name updated successfully', '');
           this.changeName.reset();
           this.loadUserInfo();
         },
         error: () => {
           console.error('Failed to update name');
-          alert('Failed to update name. Please try again.');
+          this.showToast('Failed to update name. Please try again.', '');
           this.changeName.reset();
         }
       });
@@ -140,5 +145,17 @@ export class EditAccountPageComponent implements OnInit{
   onClickLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Show toast message
+  showToast(message: string, header: string) {
+    this.toastMessage = message;
+    this.toastHeader = header || 'Notification';
+    this.show = true; // Show the toast
+  }
+
+  // Hide toast message
+  onToastHidden() {
+    this.show = false;
   }
 }

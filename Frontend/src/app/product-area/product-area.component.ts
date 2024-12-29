@@ -22,7 +22,7 @@ export class ProductAreaComponent implements OnInit{
   selectedCategory: string | null = null;
 
   currentPage = 1;
-  itemsPerPage = 18;
+  itemsPerPage = 12;
   totalPages = 0;
 
   constructor(
@@ -54,7 +54,7 @@ export class ProductAreaComponent implements OnInit{
 
   // apply filters to products
   applyFilters(searchQuery: string): void {
-    let filteredProducts = this.allProducts;
+    let filteredProducts = this.allProducts.sort((a, b) => a.name.localeCompare(b.name));
 
     // Filter by category
     if (this.selectedCategory) {

@@ -13,7 +13,7 @@ import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { AuthService } from '../auth.service';
 import {forkJoin, map, of} from 'rxjs';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbToast} from '@ng-bootstrap/ng-bootstrap';
 import {catchError} from 'rxjs/operators';
 
 
@@ -27,7 +27,8 @@ import {catchError} from 'rxjs/operators';
     NgForOf,
     DatePipe,
     NgClass,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbToast
   ],
   templateUrl: './product-page.component.html',
   styleUrl: './product-page.component.css'
@@ -44,6 +45,9 @@ export class ProductPageComponent implements OnInit {
   @ViewChild('createReviewModal', { static: true }) createReviewModal!: TemplateRef<any>;
   createReviewForm: FormGroup;
   selectedRating: number = 0;
+  toastMessage: string = '';
+  toastHeader: string = '';
+  show: boolean = false;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
@@ -140,8 +144,7 @@ export class ProductPageComponent implements OnInit {
     const userId = this.authService.userId;
     this.cartItemsService.addCartItem(userId, this.productId, this.quantity, this.size).subscribe((item) => {
       console.log('Item successfully added to cart:', item);
-      alert('Item successfully added to cart');
-      this.router.navigate(['/']);
+      this.showToast('Item successfully added to cart', '');
     });
     } else {
       this.router.navigate(['/login']);
@@ -232,11 +235,24 @@ export class ProductPageComponent implements OnInit {
 
       this.reviewService.addReview(userId, this.product.id, reviewData.rating, reviewData.comment).subscribe((review) => {
         console.log('Review created successfully:', review);
+        this.showToast('Review created successfully', '');
         this.loadProduct();
         this.canReview();
       });
 
       modal.close();
     }
+  }
+
+  // Show toast message
+  showToast(message: string, header: string) {
+    this.toastMessage = message;
+    this.toastHeader = header || 'Notification';
+    this.show = true; // Show the toast
+  }
+
+  // Hide toast message
+  onToastHidden() {
+    this.show = false;
   }
 }

@@ -10,6 +10,7 @@ import {Router} from '@angular/router';
 import {AllCommunityModule, ColDef, ModuleRegistry} from 'ag-grid-community';
 import {forkJoin, map} from 'rxjs';
 import {AgGridAngular} from 'ag-grid-angular';
+import {NgbToast} from '@ng-bootstrap/ng-bootstrap';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 
@@ -25,7 +26,8 @@ export interface ExtendedCartItem extends CartItem {
   imports: [
     NavBarComponent,
     NgIf,
-    AgGridAngular
+    AgGridAngular,
+    NgbToast
   ],
   templateUrl: './cart-page.component.html',
   styleUrl: './cart-page.component.css'
@@ -33,6 +35,9 @@ export interface ExtendedCartItem extends CartItem {
 export class CartPageComponent {
   cartItems: ExtendedCartItem[] = [];
   total: number = 0;
+  toastMessage: string = '';
+  toastHeader: string = '';
+  show: boolean = false;
 
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Product'},
@@ -46,7 +51,7 @@ export class CartPageComponent {
     {
       headerName: 'Total',
       valueGetter: (params: any) => {
-        return params.data.quantity * params.data.price;
+        return parseFloat((params.data.quantity * params.data.price).toFixed(2));
       },
     },
     {
@@ -91,6 +96,7 @@ export class CartPageComponent {
     this.cartItemsService.removeCartItem(userId, cartItemId).subscribe(() => {
       this.loadCart();
     });
+    this.showToast('Cart item delete successfully', '');
   }
 
   // Update the quantity of a cart item
@@ -108,9 +114,11 @@ export class CartPageComponent {
       next: (updated) => {
         console.log('Cart updated successfully:', updated);
         this.loadCart();
+        this.showToast('Cart updated successfully', '');
       },
       error: (err) => {
         console.error('Failed to update cart:', err);
+        this.loadCart();
       },
     });
   }
@@ -134,7 +142,6 @@ export class CartPageComponent {
       forkJoin(productObservables).subscribe((updatedCartItems) => {
         this.cartItems = updatedCartItems;
         this.calculateTotal();
-        console.log(this.cartItems);
       });
     });
   }
@@ -153,8 +160,20 @@ export class CartPageComponent {
 
     this.ordersService.createOrder(userId).subscribe((order) => {
       console.log('Order created successfully:', order);
-      alert('Order created successfully');
-      this.router.navigate(['/']);
+      this.loadCart();
+      this.showToast('Order created successfully', '');
     });
+  }
+
+  // Show toast message
+  showToast(message: string, header: string) {
+    this.toastMessage = message;
+    this.toastHeader = header || 'Notification';
+    this.show = true; // Show the toast
+  }
+
+  // Hide toast message
+  onToastHidden() {
+    this.show = false;
   }
 }

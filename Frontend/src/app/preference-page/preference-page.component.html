@@ -39,4 +39,18 @@
       </form>
     </div>
   </div>
+
+  <!-- Toast container -->
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055;" (click)="$event.stopPropagation()">
+    <ngb-toast
+      *ngIf="show"
+      [header]="toastHeader"
+      [className]="'toast bg-light text-dark'"
+      [autohide]="true"
+      [delay]="3000"
+      (hidden)="onToastHidden()"
+    >
+      {{ toastMessage }}
+    </ngb-toast>
+  </div>
 </div>

@@ -173,9 +173,57 @@ app.listen(3000, () => {
             brand: 'Giro',
             imageUrl: 'https://m.media-amazon.com/images/I/51SlOvzJ0nL._AC_SL1000_.jpg',
         });
+        const product11 = await Product.create({
+            name: 'Connected exercise bike',
+            description: 'Discover the connected exercise bike: your ideal fitness ally!',
+            price: 499,
+            category: 'Equipment',
+            brand: 'Domyos',
+            imageUrl: 'https://contents.mediadecathlon.com/p2707464/k$335e4f82a1defb21f8d320cf42592bb5/sq/velo-dappartement-connecte-ultra-confort-et-auto-alimente-eb900-b.jpg?format=auto&f=1200x1200',
+        });
+        const product12 = await Product.create({
+            name: 'Connected treadmill RUN500',
+            description: 'The RUN500 treadmill has been designed for demanding athletes.',
+            price: 699,
+            category: 'Equipment',
+            brand: 'Domyos',
+            imageUrl: 'https://contents.mediadecathlon.com/p2544966/k$094c2f605cc932357646d771743046ef/sq/tapis-de-course-connecte-run500-pliage-compact-10-inclinaison-motorisee.jpg?format=auto&f=1200x1200',
+        });
+        const product13 = await Product.create({
+            name: 'Ski',
+            description: 'We have designed this pack perfectly for seasoned skiers!',
+            price: 620,
+            category: 'Equipment',
+            brand: 'Wedze',
+            imageUrl: 'https://contents.mediadecathlon.com/p2617618/k$436daa9f45826bf0915d606c06a9074b/sq/ski-de-randonnee-cruiser-80-fixations-tour-light-peaux.jpg?format=auto&f=1200x1200',
+        });
+        const product14 = await Product.create({
+            name: 'Venum Classic Muay Thai Short',
+            description: 'Perfect for training or competition, the Venum Classic Muay Thai Shorts are made from premium satin material !',
+            price: 41.99,
+            category: 'Clothe',
+            brand: 'Venum',
+            imageUrl: 'https://fr.venum.com/cdn/shop/products/4_252Fa_252Fc_252F2_252F4ac280d1ad863f6a26f58accf2884da4fd19337d_SHORT_MUAY_THAI_CLASSIC_BLACK_GOLD_HD_02_c376cc72-b5e1-4079-91e8-35b90f4a68b4.jpg?v=1686764078&width=493',
+        });
+        const product15 = await Product.create({
+            name: 'Cleats',
+            description: 'Good choice for a beginner player.',
+            price: 17,
+            category: 'Clothe',
+            brand: 'Kipsta',
+            imageUrl: 'https://contents.mediadecathlon.com/p2606601/k$14c3a72ceca95a398b476151fc05bb58/sq/chaussure-de-football-adulte-terrains-secs-agility-100-agfg-adulte-noir.jpg?format=auto&f=1200x1200',
+        });
+        const product16 = await Product.create({
+            name: 'Catcher\'s mitt',
+            description: 'Good choice for a beginner player.',
+            price: 15,
+            category: 'Equipment',
+            brand: 'Kipsta',
+            imageUrl: 'https://contents.mediadecathlon.com/p2585609/k$c266853b5915b6b1850da5d51f4b8b9f/sq/gant-de-gardien-de-football-enfant-f100-superesist-rougebleu.jpg?format=auto&f=1200x1200',
+        });
 
         // Insert Stock
-        await Stock.create({productId: product1.id, size: 'Standard', quantity: 0,});
+        await Stock.create({productId: product1.id, size: 'Standard', quantity: 25,});
         await Stock.create({productId: product2.id, size: 'Standard', quantity: 50,});
         await Stock.create({productId: product3.id, size: '42', quantity: 50,});
         await Stock.create({productId: product3.id, size: '40', quantity: 100,});
@@ -197,16 +245,35 @@ app.listen(3000, () => {
 
         // Insert Orders
         const order1 = await Order.create({userId: user1.id, totalPrice: 81.97, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order2 = await Order.create({userId: user2.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order3 = await Order.create({userId: user3.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order4 = await Order.create({userId: user4.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order5 = await Order.create({userId: user5.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order6 = await Order.create({userId: user6.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order7 = await Order.create({userId: user7.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order8 = await Order.create({userId: user8.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order9 = await Order.create({userId: user9.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
+        const order10 = await Order.create({userId: user10.id, totalPrice: 25.99, shippingAddress: '123 Sports Street, Cityville, USA',});
 
         // Insert Order Items
         await OrderItem.create({orderId: order1.id, productId: product1.id, quantity: 2, size: 'Standard', price: 25.99,});
         await OrderItem.create({orderId: order1.id, productId: product2.id, quantity: 1, size: 'Standard', price: 30.99,});
+        await OrderItem.create({orderId: order2.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order3.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order4.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order5.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order6.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order7.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order8.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order9.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
+        await OrderItem.create({orderId: order10.id, productId: product1.id, quantity: 1, size: 'Standard', price: 25.99,});
 
         // Insert HelpTickets
         const ticket1 = await HelpTicket.create({userId: user1.id, subject: 'Delivery Issue', description: 'My order hasn’t arrived yet.',});
 
         // Insert HelpTicketResponses
         await HelpTicketResponse.create({ticketId: ticket1.id, userId: user2.id, response: 'We’re looking into the issue and will update you shortly.',});
+        await HelpTicketResponse.create({ticketId: ticket1.id, userId: user1.id, response: 'I am waiting ...',});
 
         console.log("Data inserted successfully.");
     } catch (error) {

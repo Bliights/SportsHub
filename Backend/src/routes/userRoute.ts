@@ -201,7 +201,7 @@ userRouter.post("/", async (req: Request, res: Response) => {
 userRouter.put("/:id", async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
     const { name, email, password, role } = req.body;
-    console.log("req.body", req.body);
+
     try {
         // Validate input
         if ((name !== undefined && typeof name !== 'string') ||

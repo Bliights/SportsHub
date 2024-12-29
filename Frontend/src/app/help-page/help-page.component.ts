@@ -6,20 +6,21 @@ import {HelpTicket, Product, User} from '../../generated';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {HelpTicketsService} from '../api/help-tickets.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbToast} from '@ng-bootstrap/ng-bootstrap';
 import {AllCommunityModule, ModuleRegistry} from 'ag-grid-community';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-help-page',
   standalone: true,
-  imports: [
-    NavBarComponent,
-    ReactiveFormsModule,
-    NgIf,
-    NgForOf,
-    DatePipe
-  ],
+    imports: [
+        NavBarComponent,
+        ReactiveFormsModule,
+        NgIf,
+        NgForOf,
+        DatePipe,
+        NgbToast
+    ],
   templateUrl: './help-page.component.html',
   styleUrl: './help-page.component.css',
   providers: [DatePipe]
@@ -29,10 +30,13 @@ export class HelpPageComponent implements OnInit{
   paginatedHelpTickets: HelpTicket[] = [];
   createTicketForm: FormGroup;
   @ViewChild('createTicketModal', { static: true }) createTicketModal!: TemplateRef<any>;
-
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 0;
+  toastMessage: string = '';
+  toastHeader: string = '';
+  show: boolean = false;
+
 
   constructor(private router: Router,
               private authService: AuthService,
@@ -121,6 +125,7 @@ export class HelpPageComponent implements OnInit{
       description: '',
     });
     modal.dismiss();
+    this.showToast('Help ticket created successfully', '');
   }
 
   // Delete a ticket
@@ -128,5 +133,18 @@ export class HelpPageComponent implements OnInit{
     this.helpTicketsService.deleteHelpTicket(ticketId).subscribe(() => {
       this.loadHelpTickets();
     });
+    this.showToast('Help ticket deleted successfully', '');
+  }
+
+  // Show toast message
+  showToast(message: string, header: string) {
+    this.toastMessage = message;
+    this.toastHeader = header || 'Notification';
+    this.show = true; // Show the toast
+  }
+
+  // Hide toast message
+  onToastHidden() {
+    this.show = false;
   }
 }
