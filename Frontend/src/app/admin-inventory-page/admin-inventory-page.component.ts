@@ -218,6 +218,7 @@ export class AdminInventoryPageComponent implements OnInit{
   // Open edit stock modal
   openEditStockModal(product: Product): void {
     this.selectedProduct = product;
+    this.stocks = [];
     this.loadStocks(product.id);
     this.modalService.open(this.stockModal, { size: 'xl' });
   }
