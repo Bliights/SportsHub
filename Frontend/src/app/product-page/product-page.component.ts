@@ -1,14 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Product} from '../../generated';
+import {Product, Stock, Review, User} from '../../generated';
 import {ProductsService} from '../api/products.service';
 import {StocksService} from '../api/stocks.service';
 import {CartItemsService} from '../api/cart-items.service';
-import { Stock } from '../../generated';
+import {OrdersService} from '../api/orders.service';
+import {OrdersItemsService} from '../api/orders-items.service';
+import {UsersService} from '../api/users.service';
+import {ReviewsService} from '../api/reviews.service';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
-import {NgForOf, NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { AuthService } from '../auth.service';
+import {forkJoin, map, of} from 'rxjs';
+import {AgGridAngular} from 'ag-grid-angular';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {catchError} from 'rxjs/operators';
 
 
 @Component({
@@ -18,7 +25,11 @@ import { AuthService } from '../auth.service';
     NavBarComponent,
     NgIf,
     FormsModule,
-    NgForOf
+    NgForOf,
+    DatePipe,
+    NgClass,
+    AgGridAngular,
+    ReactiveFormsModule
   ],
   templateUrl: './product-page.component.html',
   styleUrl: './product-page.component.css'
@@ -27,20 +38,36 @@ export class ProductPageComponent implements OnInit {
   productId: number = -1;
   product: Product = {};
   stocks: Stock[] = [];
+  reviews: Review[] = [];
+  users: User[] = [];
   size: string= '';
   quantity: number = 1;
+  userCanReview: boolean = false;
+  @ViewChild('createReviewModal', { static: true }) createReviewModal!: TemplateRef<any>;
+  createReviewForm: FormGroup;
+  selectedRating: number = 0;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
               private productsService: ProductsService,
               private stocksService: StocksService,
               private cartItemsService: CartItemsService,
-              private authService: AuthService) {
-
+              private reviewService: ReviewsService,
+              private authService: AuthService,
+              private ordersService: OrdersService,
+              private ordersItemsService: OrdersItemsService,
+              private usersService: UsersService,
+              private modalService: NgbModal,
+              private formBuilder: FormBuilder) {
+    this.createReviewForm = this.formBuilder.group({
+      rating: [null, Validators.required],
+      comment: [""],
+    });
   }
 
   ngOnInit(): void {
     this.loadProduct();
+    this.canReview();
   }
 
   // Load product and stock details
@@ -59,6 +86,18 @@ export class ProductPageComponent implements OnInit {
       if (stocks.length > 0) {
         this.size = stocks[0].size;
       }
+    });
+
+    //load reviews that have a comment and sort them by creation date
+    this.reviewService.getReviewsForProduct(this.productId).subscribe((reviews) => {
+      this.reviews = reviews
+        .filter(review => review.comment)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    });
+
+    //load users
+    this.usersService.getAllUsers().subscribe((users) => {
+      this.users = users;
     });
   }
 
@@ -108,6 +147,98 @@ export class ProductPageComponent implements OnInit {
     });
     } else {
       this.router.navigate(['/login']);
+    }
+  }
+
+  // Enable review button
+  canReview(): void {
+    const userId = this.authService.userId;
+
+    // Check if user has already reviewed this product
+    this.reviewService.getReviewsForProduct(this.productId).pipe(
+      catchError((error) => {
+        console.error('Error fetching reviews:', error);
+        return of([]); // Return empty array if error occurs to continue the process
+      })
+    ).subscribe((reviews) => {
+      const hasReviewed = reviews.some((review) => review.userId === userId);
+
+      if (hasReviewed) {
+        this.userCanReview = false;
+        return;
+      }
+
+      // Check if user has already ordered this product
+      this.ordersService.getOrdersByUserId(userId).subscribe((orders) => {
+        const orderObservables = orders.map((order) =>
+          this.ordersItemsService.getOrderItems(order.id).pipe(
+            map((orderItems) =>
+              orderItems.some((orderItem) => orderItem.productId === this.productId)
+            )
+          )
+        );
+
+        forkJoin(orderObservables).subscribe((results) => {
+          this.userCanReview = results.includes(true);
+        });
+      });
+    });
+  }
+
+  // Get name of user
+  getName(userId: number): string {
+    const user = this.users.find(u => u.id === userId);
+    return user ? user.name : 'Unknown';
+  }
+
+  // To generate the stars for each review
+  generateStars(rating: number): string[] {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (rating >= i + 1) {
+        stars.push("star");
+      } else {
+        stars.push("empty");
+      }
+    }
+    return stars;
+  }
+
+  // Open create review modal
+  openCreateReviewModal(): void {
+    this.modalService.open(this.createReviewModal, { size: 'lg', centered: true });
+  }
+
+  // Close modal
+  closeModal(modal: any): void {
+    this.selectedRating = 0;
+    this.createReviewForm.reset({
+      rating: null,
+      comment: "",
+    });
+    modal.dismiss()
+  }
+
+  // Star rating selection
+  selectRating(rating: number): void {
+    this.selectedRating = rating;
+    this.createReviewForm.patchValue({ rating: rating });
+    this.createReviewForm.get('rating')?.markAsTouched();
+  }
+
+  // To create a review
+  createReview(modal: any) {
+    if (this.createReviewForm.valid) {
+      const reviewData = this.createReviewForm.value;
+      const userId = this.authService.userId;
+
+      this.reviewService.addReview(userId, this.product.id, reviewData.rating, reviewData.comment).subscribe((review) => {
+        console.log('Review created successfully:', review);
+        this.loadProduct();
+        this.canReview();
+      });
+
+      modal.close();
     }
   }
 }

@@ -71,10 +71,26 @@ app.listen(3000, () => {
         // Insert Users
         const user1 = await User.create({name: 'John Doe', email: 'john.doe@example.com', password: '1234', role: 'customer'});
         const user2 = await User.create({name: 'Jane Smith', email: 'jane.smith@example.com', password: '1234', role: 'admin'});
+        const user3 = await User.create({name: 'Louis', email: 'Louis@example.com', password: '1234', role: 'customer'});
+        const user4 = await User.create({name: 'Clément', email: 'clement@example.com', password: '1234', role: 'customer'});
+        const user5 = await User.create({name: 'Claude', email: 'claude@example.com', password: '1234', role: 'customer'});
+        const user6 = await User.create({name: 'Catherine', email: 'claude@example.com', password: '1234', role: 'customer'});
+        const user7 = await User.create({name: 'Marie', email: 'marie@example.com', password: '1234', role: 'customer'});
+        const user8 = await User.create({name: 'Sarah', email: 'sarah@example.com', password: '1234', role: 'customer'});
+        const user9 = await User.create({name: 'Aubin', email: 'aubin@example.com', password: '1234', role: 'customer'});
+        const user10 = await User.create({name: 'Jeremy', email: 'jeremy@example.com', password: '1234', role: 'customer'});
 
         // Insert Preferences
         await Preferences.create({userId: user1.id,});
         await Preferences.create({userId: user2.id,});
+        await Preferences.create({userId: user3.id,});
+        await Preferences.create({userId: user4.id,});
+        await Preferences.create({userId: user5.id,});
+        await Preferences.create({userId: user6.id,});
+        await Preferences.create({userId: user7.id,});
+        await Preferences.create({userId: user8.id,});
+        await Preferences.create({userId: user9.id,});
+        await Preferences.create({userId: user10.id,});
 
         // Insert Products
         const product1 = await Product.create({
@@ -165,7 +181,15 @@ app.listen(3000, () => {
         await Stock.create({productId: product3.id, size: '40', quantity: 100,});
 
         // Insert Reviews
-        await Review.create({userId: user1.id, productId: product1.id, rating: 5, comment: 'Great football, excellent grip and durability!',});
+        await Review.create({userId: user2.id, productId: product1.id, rating: 5, comment: 'Great football, excellent grip and durability!',});
+        await Review.create({userId: user3.id, productId: product1.id, rating: 3, comment: 'Bad :(',});
+        await Review.create({userId: user4.id, productId: product1.id, rating: 2, comment: 'I hate it, give me back my money !!!',});
+        await Review.create({userId: user5.id, productId: product1.id, rating: 4, comment: 'Pretty good !',});
+        await Review.create({userId: user6.id, productId: product1.id, rating: 5, comment: 'Pretty good !',});
+        await Review.create({userId: user7.id, productId: product1.id, rating: 3, comment: '',});
+        await Review.create({userId: user8.id, productId: product1.id, rating: 4, comment: 'Pretty good !',});
+        await Review.create({userId: user9.id, productId: product1.id, rating: 4, comment: 'Pretty good !',});
+        await Review.create({userId: user10.id, productId: product1.id, rating: 4, comment: 'Pretty good !',});
 
         // Insert Cart Items
         await CartItem.create({userId: user1.id, productId: product1.id, quantity: 2, size: 'Standard',});

@@ -156,7 +156,7 @@ reviewRouter.post("/users/:userId/products/:productId/reviews", async (req: Requ
 
     try {
         // Validate input types
-        if (!rating || !comment || typeof rating !== 'number' || rating < 1 || rating > 5 || typeof comment !== 'string' ) {
+        if (!rating || comment === undefined || typeof rating !== 'number' || rating < 1 || rating > 5 || typeof comment !== 'string' ) {
             res.status(400).json({ error: "Mandatory fields are missing or invalid." });
             return;
         }

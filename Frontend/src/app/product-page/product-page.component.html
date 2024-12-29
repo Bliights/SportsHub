@@ -1,57 +1,142 @@
 <app-nav-bar></app-nav-bar>
-<div class="background-container vh-100" (click)="goHome()">
-  <div class="d-flex justify-content-center align-items-center vh-100 ">
-    <div class="card shadow-lg" style="max-width: 600px; width: 100%;" (click)="$event.stopPropagation()">
-      <img [src]="product.imageUrl" alt="Product Image" class="card-img-top img-fluid rounded-top" style="object-fit: contain; height: 300px;">
+<div class="background-container vh-100 d-flex justify-content-center align-items-center" (click)="goHome()">
+  <div class="card shadow-lg" style="max-width: 600px; width: 100%;" (click)="$event.stopPropagation()">
+    <img [src]="product.imageUrl" loading="lazy" alt="Product Image" class="card-img-top img-fluid rounded-top" style="object-fit: contain; height: 300px;">
 
-      <div class="card-body">
-        <h2 class="card-title text-center text-primary">{{ product.name }}</h2>
-        <p class="card-text text-muted text-center">{{ product.description }}</p>
-        <hr>
-        <p class="mb-2"><strong>Price:</strong> {{ product.price }}€</p>
-        <p class="mb-2"><strong>Brand:</strong> {{ product.brand }}</p>
+    <div class="card-body">
+      <h2 class="card-title text-center text-primary">{{ product.name }}</h2>
+      <p class="card-text text-muted text-center">{{ product.description }}</p>
+      <hr>
+      <p class="mb-2"><strong>Price:</strong> {{ product.price }}€</p>
+      <p class="mb-2"><strong>Brand:</strong> {{ product.brand }}</p>
 
-        <div *ngIf="stocks.length > 0; else outOfStock">
-          <!-- Size selection if there is so stock -->
-          <div class="mb-2" *ngIf="size !== 'Standard'">
-            <label for="size" class="form-label"><strong>Select Size:</strong></label>
-            <select id="size" class="form-select" [(ngModel)]="size" (change)="validateQuantity()">
-              <option *ngFor="let stock of stocks" [value]="stock.size">
-                {{ stock.size }}
-              </option>
-            </select>
-          </div>
-
-          <p class="mb-2"><strong>Stock:</strong> {{ getStockForSelectedSize() }}</p>
-
-          <div class="mb-2">
-            <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
-            <input id="quantity"
-              type="number"
-              class="form-control"
-              [(ngModel)]="quantity"
-              [min]="1"
-              [max]="getStockForSelectedSize()"
-              (blur)="validateQuantity()"
-            />
-          </div>
-
-          <div class="d-grid">
-            <button
-              class="btn btn-dark"
-              [disabled]="!getStockForSelectedSize()"
-              (click)="addToCart()"
-            >
-              Add to Cart
-            </button>
-          </div>
+      <div *ngIf="stocks.length > 0; else outOfStock">
+        <!-- Size selection if there is so stock -->
+        <div class="mb-2" *ngIf="size !== 'Standard'">
+          <label for="size" class="form-label"><strong>Select Size:</strong></label>
+          <select id="size" class="form-select" [(ngModel)]="size" (change)="validateQuantity()">
+            <option *ngFor="let stock of stocks" [value]="stock.size">
+              {{ stock.size }}
+            </option>
+          </select>
         </div>
 
-        <!-- Text when out of stock -->
-        <ng-template #outOfStock>
-          <p class="text-danger text-center fw-bold mt-3">Out of stock.</p>
-        </ng-template>
+        <p class="mb-2"><strong>Stock:</strong> {{ getStockForSelectedSize() }}</p>
+
+        <div class="mb-2">
+          <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+          <input id="quantity"
+            type="number"
+            class="form-control"
+            [(ngModel)]="quantity"
+            [min]="1"
+            [max]="getStockForSelectedSize()"
+            (blur)="validateQuantity()"
+          />
+        </div>
+
+        <div class="d-grid">
+          <button
+            class="btn btn-dark"
+            [disabled]="!getStockForSelectedSize()"
+            (click)="addToCart()"
+          >
+            Add to Cart
+          </button>
+        </div>
       </div>
+
+      <!-- Text when out of stock -->
+      <ng-template #outOfStock>
+        <p class="text-danger text-center fw-bold mt-3">Out of stock.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Scrollable comments section -->
+  <div class="card border rounded shadow-sm ms-4" style="width: 400px;" (click)="$event.stopPropagation()">
+    <div class="card-header bg-primary text-white text-center">
+      <h3 class="mb-0">Comments</h3>
+    </div>
+
+    <!-- Scrollable comments list -->
+    <div class="card-body p-3" style="max-height: 600px; overflow-y: auto;">
+      <div *ngFor="let review of reviews" class="border rounded p-3 mb-3 shadow-sm position-relative bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <p class="fw-bold mb-0">{{ getName(review.userId) }}</p>
+          <div class="d-flex">
+          <span *ngFor="let star of generateStars(review.rating)" class="me-1">
+            <i *ngIf="star === 'star'" class="bi bi-star-fill text-warning"></i>
+            <i *ngIf="star === 'empty'" class="bi bi-star text-secondary"></i>
+          </span>
+          </div>
+        </div>
+        <p class="mb-4">{{ review.comment }}</p>
+        <span class="text-muted small position-absolute" style="bottom: 8px; right: 8px;">
+        {{ review.createdAt | date: 'dd/MM/yyyy' }}
+      </span>
+      </div>
+
+      <!-- No comments message -->
+      <div *ngIf="reviews.length === 0" class="text-center text-muted">
+        <p>No comments yet.</p>
+      </div>
+    </div>
+
+    <!-- Add review button -->
+    <div class="card-footer text-center bg-light">
+      <button class="btn btn-primary w-100" [disabled]="!userCanReview" (click)="openCreateReviewModal()">
+        Add a Review
+      </button>
     </div>
   </div>
 </div>
+
+
+<!-- Modal for the review creation -->
+<ng-template #createReviewModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="stockModalLabel">
+      Create Review for {{ product.name }}
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal(modal)"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="createReviewForm" class="d-flex flex-column align-items-center">
+      <!-- Rating section with interactive stars -->
+      <div class="mb-4 text-center w-100">
+        <div class="d-flex justify-content-center">
+          <i
+            *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+            class="bi"
+            [ngClass]="i < selectedRating ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"
+            style="font-size: 2rem; cursor: pointer;"
+            (click)="selectRating(i + 1)"
+          ></i>
+        </div>
+        <div class="text-danger mt-2" *ngIf="createReviewForm.get('rating')?.touched && createReviewForm.get('rating')?.invalid">
+          Rating is required.
+        </div>
+      </div>
+
+      <!-- Optional comment section -->
+      <div class="mb-3 w-100">
+        <label for="comment" class="form-label">Comment (Optional)</label>
+        <textarea
+          id="comment"
+          class="form-control"
+          formControlName="comment"
+          placeholder="Enter your comment"
+          rows="4"
+        ></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal(modal)">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="createReviewForm.invalid" (click)="createReview(modal)">Create Review</button>
+  </div>
+</ng-template>
+
+
+

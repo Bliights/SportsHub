@@ -12,7 +12,7 @@
       <div *ngFor="let product of paginatedProducts" class="col-md-2 mb-4">
         <div class="card h-100 shadow-sm cursor-pointer hover-zoom hover-card rounded" (click)="viewProductDetails(product.id)">
           <div class="card-img-container rounded-top" style="background-color: white; padding: 10px;">
-            <img [src]="product.imageUrl" alt="Product Image" class="card-img-top img-fluid" style="height: 120px; object-fit: contain;" />
+            <img [src]="product.imageUrl" loading="lazy" alt="Product Image" class="card-img-top img-fluid" style="height: 120px; object-fit: contain;" />
           </div>
           <div class="card-body text-center d-flex flex-column justify-content-center rounded-bottom">
             <h5 class="card-title">{{ product.name }}</h5>
