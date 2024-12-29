@@ -16,7 +16,7 @@ The primary goal of this project was to create a web application by leveraging t
 - **Backend**: Developed in Node.js with TypeScript to ensure a robust and strongly-typed structure.
 - **Frontend**: Built with Angular to provide a modern and interactive user interface.
 
-Furthermore, to enhance the maintainability of the project, we integrated **Swagger**. This tool allowed us to automatically generate our APIs, making it easier to maintain synchronization between the frontend and backend.
+Furthermore, to enhance the maintainability of the project, we integrated **Swagger**. This tool allowed us to automatically generate our APIs, making it easier to maintain synchronization between the frontend and backend. 
 
 ### 2. Code Structure
 ***
