@@ -3,7 +3,28 @@
     <span class="input-group-text" id="search-icon">
       <i class="bi bi-search"></i>
     </span>
-    <input type="text" class="form-control" placeholder="Search for products..." aria-label="Search" aria-describedby="search-icon" [(ngModel)]="searchQuery"/>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search for products..."
+      aria-label="Search"
+      aria-describedby="search-icon"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+      (input)="fetchSuggestions(searchQuery)"
+    />
     <button class="btn btn-primary" type="button" (click)="onSearch()">Search</button>
+  </div>
+
+  <!-- Suggestions dropdown -->
+  <div *ngIf="suggestions.length" class="dropdown-menu show" style="width: 50%; margin-top: 2.3rem;">
+    <button
+      *ngFor="let suggestion of suggestions"
+      class="dropdown-item d-flex align-items-center"
+      (click)="selectSuggestions(suggestion)"
+    >
+      <i class="bi me-2"></i>
+      {{ suggestion }}
+    </button>
   </div>
 </div>

@@ -13,7 +13,6 @@ import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { AuthService } from '../auth.service';
 import {forkJoin, map, of} from 'rxjs';
-import {AgGridAngular} from 'ag-grid-angular';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {catchError} from 'rxjs/operators';
 
@@ -28,7 +27,6 @@ import {catchError} from 'rxjs/operators';
     NgForOf,
     DatePipe,
     NgClass,
-    AgGridAngular,
     ReactiveFormsModule
   ],
   templateUrl: './product-page.component.html',

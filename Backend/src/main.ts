@@ -183,7 +183,7 @@ app.listen(3000, () => {
         // Insert Reviews
         await Review.create({userId: user2.id, productId: product1.id, rating: 5, comment: 'Great football, excellent grip and durability!',});
         await Review.create({userId: user3.id, productId: product1.id, rating: 3, comment: 'Bad :(',});
-        await Review.create({userId: user4.id, productId: product1.id, rating: 2, comment: 'I hate it, give me back my money !!!',});
+        await Review.create({userId: user4.id, productId: product1.id, rating: 2, comment: 'I hate it, give me my money back  !!!',});
         await Review.create({userId: user5.id, productId: product1.id, rating: 4, comment: 'Pretty good !',});
         await Review.create({userId: user6.id, productId: product1.id, rating: 5, comment: 'Pretty good !',});
         await Review.create({userId: user7.id, productId: product1.id, rating: 3, comment: '',});
