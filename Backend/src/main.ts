@@ -118,7 +118,7 @@ app.listen(3000, () => {
             imageUrl: 'https://picou-montagne.com/wp-content/uploads/2022/03/adidas-duramo-noir-chaussure-running-homme-1.jpg',
         });
         const product4 = await Product.create({
-            name: 'Chaussures-de-randonnee',
+            name: 'Hiking Shoes',
             description: 'Really nice shoes.',
             price: 60,
             category: 'Clothe',
